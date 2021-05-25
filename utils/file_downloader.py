@@ -108,9 +108,11 @@ def download(entry, tail, path=None):
         file = file.close()
         ftp.quit()
 
-answer = input("Do you want to download these maps? y/n: ")
-if answer == 'y':
-    for i in range(len(entries)):
-        download(entries[i], tails[i])
+if __name__ == '__main__':
+
+    answer = input("Do you want to download these maps? y/n: ")
+    if answer == 'y':
+        for i in range(len(entries)):
+            download(entries[i], tails[i])
 
 
