@@ -137,5 +137,3 @@ if __name__ == '__main__':
     # print(f"Use the select(data, ids, threshold) function to choose the pairs of maps you would like to get rid of.")
 
 
-
-            
