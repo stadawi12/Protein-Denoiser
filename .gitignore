@@ -2,6 +2,8 @@ data/downloads/1.0preds/
 data/downloads/2.0preds/
 data/downlaods/map_tally.csv
 
+__pycache__
+
 utils/ml_toolbox/tests/
 
 data/downloads/1.0norm/
