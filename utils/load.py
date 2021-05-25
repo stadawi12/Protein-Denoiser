@@ -111,30 +111,30 @@ if __name__ == '__main__':
     d2 = Data('../data/downloads/2.0/')
     print(d1.maps)
     print(d2.maps)
-    # data = []
-    # ids = []
-    # for i in range(len(d1.ls)):
-    #     d1.load_maps(i)
-    #     d2.load_maps(i)
-    #     print("Calculating cross-correlations...")
-    #     for j in range(len(d1.batch_maps)):
-    #         map1 = d1.batch_maps[j].map
-    #         map2 = d2.batch_maps[j].map
-    #         width = map1.shape[0]
-    #         single_map_data = []
-    #         ids.append(d1.batch_maps[j].id)
-    #         for k in range(width):
-    #             xCorr = cc.cross_correlate(map1[k,:,:],
-    #                                        map2[k,:,:])[0][0]
-    #             if str(xCorr) != 'nan':
-    #                 single_map_data.append(xCorr)
+    data = []
+    ids = []
+    for i in range(len(d1.ls)):
+        d1.load_maps(i)
+        d2.load_maps(i)
+        print("Calculating cross-correlations...")
+        for j in range(len(d1.batch_maps)):
+            map1 = d1.batch_maps[j].map
+            map2 = d2.batch_maps[j].map
+            width = map1.shape[0]
+            single_map_data = []
+            ids.append(d1.batch_maps[j].id)
+            for k in range(width):
+                xCorr = cc.cross_correlate(map1[k,:,:],
+                                           map2[k,:,:])[0][0]
+                if str(xCorr) != 'nan':
+                    single_map_data.append(xCorr)
 
 
-    #         avg = sum(single_map_data)/len(single_map_data)
-    #         data.append(avg)
-    # print("Finished!")
-    # print(f"Output: 'data' and 'ids'")
-    # print(f"Use the select(data, ids, threshold) function to choose the pairs of maps you would like to get rid of.")
+            avg = sum(single_map_data)/len(single_map_data)
+            data.append(avg)
+    print("Finished!")
+    print(f"Output: 'data' and 'ids'")
+    print(f"Use the select(data, ids, threshold) function to choose the pairs of maps you would like to get rid of.")
 
 
 

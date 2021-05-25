@@ -26,7 +26,7 @@ parser.add_argument('-e', '--epochs', type=int,
         help="Number of epochs to run for")
 parser.add_argument('-mbs', '--minibatchsize', type=int,
         help="Mini batch size")
-parser.add_argument('-dirs', '--numberofdirs', default=None,
+parser.add_argument('-dirs', '--numberofdirs', default=0,
         type=int,
         help="Number of batches to include in training")
 parser.add_argument('-t', '--tail', default='', type=str,
@@ -70,7 +70,7 @@ tic = time.perf_counter()
 trainingLosses = []
 validationLosses = []
 
-if args.numberofdirs == None:
+if args.numberofdirs == 0:
     numberofdirs = len(d1.ls)
 else:
     numberofdirs = args.numberofdirs
@@ -114,16 +114,16 @@ for e in range(EPOCHS):
             y = y.to(device)
             unet.zero_grad()
             out = unet(x)
-            loss = F.mse_loss(out ,y)
-            # loss = my_loss(out, y, 4)
+            # loss = F.mse_loss(out ,y)
+            loss = my_loss(out, y, 4)
             trainingLoss.append(loss.item())
             print(f'{i}: {loss}, {e}')
             loss.backward()
             optimiser.step()
 
-    sum_of_trainingLosses = sum(trainingLoss)
-    epoch_trainingLoss = sum_of_trainingLosses / len(trainingLoss)
-    trainingLosses.append(epoch_trainingLoss)
+    # sum_of_trainingLosses = sum(trainingLoss)
+    # epoch_trainingLoss = sum_of_trainingLosses / len(trainingLoss)
+    # trainingLosses.append(epoch_trainingLoss)
 
     # OUTPUT MODELS EVERY 5TH EPOCH
     # After first epoch
