@@ -8,6 +8,7 @@ import pandas as pd
 from multi_proteins import load_data, preproces_data
 import matplotlib.pyplot as plt
 import xCorr as cc
+from proteins import load_map
 
 
 
@@ -16,7 +17,8 @@ class Data:
     def __init__(self, path):
         self.path_global = path
         self.ls = os.listdir(self.path_global)
-        self.ls.remove('.gitkeep')
+        if '.gitkeep' in self.ls:
+            self.ls.remove('.gitkeep')
         self.ls = [float(f) for f in self.ls]
         self.ls.sort()
         self.maps = [os.listdir(self.path_global + 
@@ -33,8 +35,8 @@ class Data:
         self.batch = None
         data = load_data(self.path_global, [self.ls[i]], n)
 
-        data = preproces_data(data, 
-                norm=True, 
+        data = preproces_data(data,
+                norm=True,
                 mode='tile',
                 cshape=64,
                 norm_vox=1.4,
@@ -109,6 +111,8 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     d1 = Data('../data/downloads/1.0/')
     d2 = Data('../data/downloads/2.0/')
+    d3 = Data('../data/downloads/1.5/')
+    d3.load_batch(0)
     print(d1.maps)
     print(d2.maps)
     # data = []

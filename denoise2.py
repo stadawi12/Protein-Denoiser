@@ -56,6 +56,10 @@ for i, ID in enumerate(ids):
         index = i
 assert index != None, "No map with this ID has been found"
 
+print(f"Shape of loaded map: {data.batch[index].map.shape}")
+plt.imshow(data.batch[index].map[50])
+plt.show()
+
 tiles = data.batch[0].tiles
 tiles = list_to_torch(tiles)
 
@@ -91,8 +95,14 @@ outs_np = [tile.numpy() for tile in outs] # (1,1,64,64,64)
 outs_np = [t.squeeze()  for t in outs_np] # squeeze
 # assign to pred
 # recompose
+print(f"shape of map before recomposing: {data.batch[index].map.shape}")
 data.batch[index].pred = outs_np
+print(f"number of tiles used for recomposing: {len(data.batch[index].pred)}")
+print(f"Shape of tiles used for recomposing: {data.batch[index].pred[0].shape}")
 data.batch[index].recompose()
+print(f"Shape of recmposed map: {data.batch[index].map.shape}")
+plt.imshow(data.batch[index].map[50])
+plt.show()
 data.batch[index].map = data.batch[index].pred
 data.batch[index].save_map(f'data/downloads/1.0preds/{model[:-3]}.map')
 print(f"Saved map to: data/downloads/1.0preds/{model[:-3]}.map")
