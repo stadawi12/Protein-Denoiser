@@ -3,7 +3,6 @@ sys.path.insert(1, 'utils/')
 sys.path.insert(1, 'utils/ml_toolbox/')
 sys.path.insert(1, 'utils/ml_toolbox/src/')
 
- 
 # utils imports 
 from unet import UNet
 from csv_filter import get_entries
