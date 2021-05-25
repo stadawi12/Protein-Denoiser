@@ -6,7 +6,7 @@ sys.path.insert(1, 'utils/ml_toolbox/src/')
  
 # utils imports 
 from unet import UNet
-import loader as l
+from load import Data
 from csv_filter import get_entries
 
 # library imports
@@ -16,14 +16,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import argparse
+import os
+
+def list_to_torch(lst):
+    lst = [torch.from_numpy(tile) for tile in lst]
+    lst = [tile.unsqueeze(0).unsqueeze(0) for tile in lst]
+    return lst
+
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-tm', '--model', type=str,
-        help="Filename of trained model to be used for denoising")
 parser.add_argument('--id', type=str,
         help="ID of map to be denoised")
-parser.add_argument('-r', '--res', default=[1.0], type=list,
-        help='"Resolution" name of folder containing maps (default set to [1.0])')
+parser.add_argument('--model', type=str,
+        help="Name of model you want to use")
 args = parser.parse_args()
 
 # Check if machine has a GPU
@@ -34,46 +39,34 @@ else:
     dev = "cpu"
     device = torch.device(dev)
 
-path = 'data/downloads/1.0/' # global path to maps
-hlf = args.res         # half_maps_1
-n_ex = None             # number of examples to load
+path = 'data/downloads/1.5/' # global path to test maps
 
-# load all saved maps
-data = l.data_loader(path, hlf, n_ex) # half maps 1
+# Load all maps and store ids
+data = Data(path)
+data.load_batch(0)
+ids = []
+for Map in data.batch:
+    map_id = Map.id
+    ids.append(map_id)
 
-# extract ids of loaded maps
-data_ids = [d.id for d in data]
-
-wanted_id = args.id
-index = 0
-for i, id in enumerate(data_ids):
-    if id == wanted_id:
+# Search for index of map to be denoised
+index = None
+for i, ID in enumerate(ids):
+    if args.id == ID:
         index = i
+assert index != None, "No map with this ID has been found"
 
-data = [data[index]]
+tiles = data.batch[0].tiles
+tiles = list_to_torch(tiles)
 
-# Tile filtered maps
-data_tiled = l.data_preprocess(data)
-
-# extract tiles of half maps
-tiles_np = [tile for d in data_tiled for tile in d.tiles]
-
-# convert tiles to tensors
-tiles_torch = [torch.tensor(t) for t in tiles_np]
-
-# unsqueeze so the shape of tiles are [bs,c,h,w,d]
-tiles_uncat = [t.unsqueeze(0).unsqueeze(0) \
-                     for t in tiles_torch]
-
-# concatonate tiles into one array
-tiles_torch = torch.cat(tiles_uncat, 0)
 
 # Model (UNET)
 unet  = UNet()
-setup = args.model
+model = args.model
+
 
 # Load the trained unet model
-unet.load_state_dict(torch.load(f'trained_models/{setup}',
+unet.load_state_dict(torch.load(f'trained_models/{model}',
     map_location=device))
 unet = unet.to(device)  # move unet to device
 
@@ -86,7 +79,7 @@ with torch.no_grad():
         all the gradients of each map,  this is essential
         for memory reasons.
     """
-    for i, tile in enumerate(tiles_uncat):
+    for i, tile in enumerate(tiles):
         print(f"tile: {i}")
         tile = tile.to(device)
         out = unet(tile)
@@ -98,8 +91,8 @@ outs_np = [tile.numpy() for tile in outs] # (1,1,64,64,64)
 outs_np = [t.squeeze()  for t in outs_np] # squeeze
 # assign to pred
 # recompose
-data[0].pred = outs_np
-data[0].recompose()
-data[0].map = data[0].pred
-data[0].save_map(f'data/downloads/1.0preds/{setup[:-3]}.map')
-print(f"Saved map to: data/downloads/1.0preds/{setup[:-3]}.map")
+data.batch[index].pred = outs_np
+data.batch[index].recompose()
+data.batch[index].map = data.batch[index].pred
+data.batch[index].save_map(f'data/downloads/1.0preds/{model[:-3]}.map')
+print(f"Saved map to: data/downloads/1.0preds/{model[:-3]}.map")
