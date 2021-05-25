@@ -1,6 +1,8 @@
 import sys
 sys.path.insert(1, 'utils/')
 sys.path.insert(1, 'utils/ml_toolbox/')
+sys.path.insert(1, 'utils/ml_toolbox/src/')
+
  
 # utils imports 
 from unet import UNet
@@ -27,6 +29,8 @@ parser.add_argument('-mbs', '--minibatchsize', type=int,
 parser.add_argument('-dirs', '--numberofdirs', default=None,
         type=int,
         help="Number of batches to include in training")
+parser.add_argument('-t', '--tail', default='', type=str,
+        help='Tail you want to add to the directory name')
 args = parser.parse_args()
 
 # Check if machine has a GPU
@@ -52,13 +56,13 @@ mbs = args.minibatchsize   # mini-batch-size
 
 globalPath = 'data/downloads/' # global path to maps
 
-ids = ut.get_ids('data/downloads/', 0, 200, 3, 4)
-
-test1, test1_ids = ut.loadTestData(globalPath, [1.5], None)
-test2, test2_ids = ut.loadTestData(globalPath, [2.5], None)
 
 d1 = Data(globalPath+'1.0/')
 d2 = Data(globalPath+'2.0/')
+
+test1 = Data(globalPath+'1.5/')
+test2 = Data(globalPath+'2.5/')
+
 
 # start timer
 tic = time.perf_counter()
@@ -71,15 +75,23 @@ if args.numberofdirs == None:
 else:
     numberofdirs = args.numberofdirs
 
-def my_loss(output, target):
-    loss = torch.mean((output - target)**4 )
+def my_loss(output, target, power):
+    loss = torch.mean((torch.abs(output - target))**power)
     return loss
+
 
 number_of_maps = 0
 for i in range(numberofdirs):
     number_of_maps += d1.batch_sizes[i]
 
+dir_name = f"m{number_of_maps}_e{EPOCHS}_mbs{mbs}"
+dir_name = dir_name + args.tail
+
+dir_name = ut.create_directory(dir_name)
+
+
 for e in range(EPOCHS):
+    # powers = np.arange(2,4+0.0001,(4-2)/(EPOCHS-1))
     
     trainingLoss = []
 
@@ -91,10 +103,10 @@ for e in range(EPOCHS):
         # Training loop
         for i in range(0, d1.tiles.shape[0], mbs):
             # generate validation loss before starting each epoch
-            if i == 0:
-                validationLoss = ut.validate(test1, test2, 
-                        device, unet)
-                validationLosses.append(validationLoss)
+            # if i == 0:
+            #     validationLoss = ut.validate(test1, test2, 
+            #             device, unet)
+            #     validationLosses.append(validationLoss)
 
             x = d1.tiles[i:i+mbs, 0:1, :, :, :]
             x = x.to(device)
@@ -102,8 +114,8 @@ for e in range(EPOCHS):
             y = y.to(device)
             unet.zero_grad()
             out = unet(x)
-            # loss = F.mse_loss(out ,y)
-            loss = my_loss(out, y)
+            loss = F.mse_loss(out ,y)
+            # loss = my_loss(out, y, 4)
             trainingLoss.append(loss.item())
             print(f'{i}: {loss}, {e}')
             loss.backward()
@@ -116,38 +128,8 @@ for e in range(EPOCHS):
     # OUTPUT MODELS EVERY 5TH EPOCH
     # After first epoch
     # And ensure to output model after all epochs have passed
-    tail = ''
 
-    check = 'Not done'
-
-    if e == 0:
-        filename = f"m{number_of_maps}_e{e+1}_mbs{mbs}"
-        full_name = filename + tail
-        
-        ut.save_model(full_name, unet)
-        ut.save_plots(full_name, trainingLosses,
-                validationLosses)
-        if e + 1 == EPOCHS:
-            check = 'Done'
-
-    if (e+1)%5 == 0:
-        if e+1 == EPOCHS:
-            check = 'Done'
-        filename = f"m{number_of_maps}_e{e+1}_mbs{mbs}"
-        full_name = filename + tail
-        
-        ut.save_model(full_name, unet)
-        ut.save_plots(full_name, trainingLosses,
-                validationLosses)
-
-    if e+1 == EPOCHS:
-        if check == 'Not done':
-            filename = f"m{number_of_maps}_e{e+1}_mbs{mbs}"
-            full_name = filename + tail
-            
-            ut.save_model(full_name, unet)
-            ut.save_plots(full_name, trainingLosses,
-                validationLosses)
+    ut.save_model2(dir_name, e+1, unet)
 
 # end timer
 toc = time.perf_counter()
