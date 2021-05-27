@@ -200,10 +200,21 @@ class Maps:
         self.get_contents()
 
     def move_all_from_bad(self):
+
+        # create path to badMaps (e.g. 1.0+badMaps=1.0badMaps)
         path_bad = self.path_global[:-1] + 'badMaps/'
+
+        # Get contents of badMaps 
         contents = os.listdir(path_bad)
+        
+        # Remove .gitkeep from contents to prevent deletion
+        contents.remove('.gitkeep')
+
+        # Wrap over move_to_good method
         for map_id in contents:
             self.move_to_good(map_id)
+            
+        # Update attributes the directory
         self.ls = os.listdir(self.path_global)
         self.get_maps()
         self.get_rest()
