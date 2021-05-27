@@ -29,7 +29,7 @@ def double_conv(in_c, out_c):
     return conv
 
 # The 3D UNet class
-class UNet(nn.Module):
+class ZigZag(nn.Module):
     def __init__(self):
         super(UNet, self).__init__()
 

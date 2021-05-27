@@ -1,0 +1,12 @@
+dependencies:
+ - tensorflow
+ - torch
+ - matplotlib
+ - mrcfile
+ - Bio
+ - tqdm
+ - progressbar2
+ - numpy
+ - pandas
+ - bs4
+ - scipy
