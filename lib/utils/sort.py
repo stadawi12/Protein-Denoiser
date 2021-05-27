@@ -225,7 +225,7 @@ class Maps:
 
 
 if __name__ == '__main__':
-    m1 = Maps('1.0/')
-    m2 = Maps('2.0/')
+    m1 = Maps('../../data/1.0/')
+    m2 = Maps('../../data/2.0/')
     print(m1.ls)
     print(m2.ls)

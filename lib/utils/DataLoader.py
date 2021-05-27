@@ -1,47 +1,38 @@
-# Load os module to deal with files
-import os
+from ml_toolbox.src.proteins import load_data
 
 class Data:
     
-    def __init__(self, path_global):
-        self.path_global = path_global
-        self.batch_index = 0
-        self.number_of_batches = None
-        self.input = None
-        self.target = None
-        self.validation_I = None
-        self.validation_T = None
+    def __init__(self, path):
+        self.path_global = path
+        self.ls = os.listdir(self.path_global)
+        if '.gitkeep' in self.ls:
+            self.ls.remove('.gitkeep')
+        self.ls = [float(f) for f in self.ls]
+        self.ls.sort()
+        self.maps = [os.listdir(self.path_global + 
+            str(f)) for f in self.ls]
+        self.no_of_batches = len(self.ls)
+        self.batch_id = None
+        self.tiles = None
+        self.get_contents()
+        self.batch_sizes = [len(d) for d in self.rest_contents]
 
 
-    def load_batch(self, directory, i, n=None, norm=True):
-        """ Loads a single batch from directory
+    def load_batch(self, i, n=None):
+        self.batch_id = i
+        self.batch = None
+        data = load_data(self.path_global, [self.ls[i]], n)
 
-            directory: Example '1.0', '2.0', '1.5'... 
-                    i: batch index
-                    n: number of maps to load from batch
-                 norm: set True to normalise maps between 0 and 1
-
-        """
-        # Generate full path to directory of batches
-        full_path = os.path.join(self.path_global, directory)
-
-        # Batches stored in directory
-        batches = os.listdir(full_path)
-
-        # Load maps inside the batch
-        data = load_data(full_path, [batches[i]], n)
-
-        # Preproces maps (generate tiles)
         data = preproces_data(data,
-                norm=norm,
+                norm=True,
                 mode='tile',
                 cshape=64,
                 norm_vox=1.4,
                 norm_vox_lim=(1.4,1.4)
                 )
 
-        # self.convert()
-        return data
+        self.batch = data
+        self.convert()
 
     def load_maps(self, i, n=None):
         self.batch_id = i
@@ -75,10 +66,8 @@ class Data:
 
 
 if __name__ == '__main__':
-    dr1 = Directory("../../data/1.0/")
-    b1 = Batch("../../data/1.0/", "1.0/")
-    #  from sort import Maps
-
+    d1 = Data('../../data/1.0/')
+    d1.load_batch(0)
     #  m1 = Maps('../data/downloads/1.0/')
     #  m2 = Maps('../data/downloads/2.0/')
 
@@ -137,5 +126,3 @@ if __name__ == '__main__':
     #  print("Finished!")
     #  print(f"Output: 'data' and 'ids'")
     #  print(f"Use the select(data, ids, threshold) function to choose the pairs of maps you would like to get rid of.")
-
-
