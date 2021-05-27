@@ -1,4 +1,16 @@
-from ml_toolbox.src.proteins import load_data
+# Standard library imports
+import sys
+sys.path.insert(1, 'ml_toolbox/src')
+import torch
+import os
+
+# Related third party imports (Jola's toolbox)
+from multi_proteins import load_data, preproces_data
+
+# Local application/library specific imports
+from xCorr import cross_correlate as cc
+from sort import Maps
+
 
 class Data:
     
@@ -62,6 +74,10 @@ class Data:
         dir_contents = [os.listdir(dir_path) 
                 for dir_path in dir_paths]
         self.rest_contents = dir_contents
+
+    def cross_correlate
+
+
 
 
 

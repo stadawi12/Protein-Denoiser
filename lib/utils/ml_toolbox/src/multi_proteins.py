@@ -7,12 +7,12 @@ from multiprocessing import Queue, Process, cpu_count, current_process
 import numpy as np
 import pandas as pd
 
-from src.proteins import gen_lab, data_isopad, data_crop, borders, \
+from proteins import gen_lab, data_isopad, data_crop, borders, \
     data_scale, data_vox_norm, Sample
-from src.utils import progress, divx, normalise
+from utilsml import progress, divx, normalise
 
 
-def load_data(path, res, n=None, predict=False, weights=False, amino_groups=False):
+def load_data(path, res, n=None, predict=True, weights=False, amino_groups=False):
     """
     Load data into object-oridented database from two directories: one containing electron density maps
     and one containing corresponding labelled maps (voxel-to-voxel corespondence). Function will only process
