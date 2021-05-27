@@ -109,38 +109,40 @@ def download(entry, tail, path=None):
         ftp.quit()
 
 if __name__ == '__main__':
-    from sort import Maps
-    """
-        Before downloading data need to ensure that 
-        directories containin maps are prepared 
-        correctly in order to prevent downloading
-        copies of maps.
-    """
-    
-    # Create object to deal with sorting data
-    PATH_1 = '../../data/1.0/'
-    PATH_2 = '../../data/2.0/'
-    m1 = Maps(PATH_1)
-    m2 = Maps(PATH_2)
-
-    # Ensure maps have been flattened
-    m1.flatten()
-    m2.flatten()
-    print("!Flattened directories containing batches")
-
-    # delete residual directories
-    m1.del_rest()
-    m2.del_rest()
-    print("!Deleted residual sub-directories")
-
-    # Ensure bad maps are empty
-    m1.move_all_from_bad()
-    m2.move_all_from_bad()
-    print("!Moved everything from badMaps")
 
 
     answer = input("Do you want to download these maps? y/n: ")
     if answer == 'y':
+        from sort import Maps
+        """
+            Before downloading data need to ensure that 
+            directories containin maps are prepared 
+            correctly in order to prevent downloading
+            copies of maps.
+        """
+        
+        # Create object to deal with sorting data
+        PATH_1 = '../../data/1.0/'
+        PATH_2 = '../../data/2.0/'
+        m1 = Maps(PATH_1)
+        m2 = Maps(PATH_2)
+
+        # Ensure maps have been flattened
+        m1.flatten()
+        m2.flatten()
+        print("!Flattened directories containing batches")
+
+        # delete residual directories
+        m1.del_rest()
+        m2.del_rest()
+        print("!Deleted residual sub-directories")
+
+        # Ensure bad maps are empty
+        m1.move_all_from_bad()
+        m2.move_all_from_bad()
+        print("!Moved everything from badMaps")
+
+        # Finally, download maps
         for i in range(len(entries)):
             download(entries[i], tails[i])
 
