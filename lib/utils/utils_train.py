@@ -1,5 +1,3 @@
-import sys
-sys.path.insert(1, 'utils/')
 import torch
 import torch.nn.functional as F
 import os
