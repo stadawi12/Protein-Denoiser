@@ -14,7 +14,7 @@ import numpy as np
 from scipy.ndimage import zoom
 
 # project imports
-from utils import progress, grid_to_real, divx, normalise
+from utilsml import progress, grid_to_real, divx, normalise
 from viewer import plot_3d
 
 warnings.filterwarnings("ignore")
