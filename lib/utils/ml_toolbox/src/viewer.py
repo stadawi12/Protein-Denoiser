@@ -9,7 +9,7 @@ import tensorflow as tf
 
 import mrcfile as mrc
 
-from src.utils import real_to_grid
+from utils import real_to_grid
 
 
 def plot_labels(amap, x, y, z, atm, orig, sample, cell):
