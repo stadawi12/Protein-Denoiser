@@ -1,6 +1,6 @@
 from ftplib import FTP
 from progressbar import ProgressBar
-from csv_filter import get_entries
+from .lib.utils.csv_filter import get_entries
 import pandas as pd
 import os
 """
@@ -109,6 +109,12 @@ def download(entry, tail, path=None):
         ftp.quit()
 
 if __name__ == '__main__':
+    from sort import Maps
+
+    # Ensure maps have been flattened
+
+
+    # Ensure bad maps are empty
 
     answer = input("Do you want to download these maps? y/n: ")
     if answer == 'y':
