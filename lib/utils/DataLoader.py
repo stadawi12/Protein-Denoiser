@@ -28,6 +28,7 @@ class Data:
         self.tiles = None
         self.get_contents()
         self.batch_sizes = [len(d) for d in self.rest_contents]
+        self.batch_maps = None
 
 
     def load_batch(self, i, n=None):
@@ -75,8 +76,78 @@ class Data:
                 for dir_path in dir_paths]
         self.rest_contents = dir_contents
 
-    def cross_correlate
 
+def cross_correlate_batch2D(batch_1, batch_2):
+    """
+        i: batch index
+    """
+    # Bins which will hold cross-correlation data and ids
+    data = []   # Cross-correlation outputs
+    ids = []    # Corresponding map ids
+
+    # Print communicate
+    print("Calculating cross-correlations...")
+
+    # For every map in batch..
+    for j in range(len(batch_1.batch_maps)):
+
+        # Select j'th pair of maps to cross-correlate
+        map1 = batch_1.batch_maps[j].map
+        map2 = batch_2.batch_maps[j].map
+
+        # Obtain the number of layers for 2D CC
+        width = map1.shape[0]
+
+        # Create empty bin to collect CC values
+        single_map_data = []
+
+        # Append id of map to ids
+        ids.append(batch_1.batch_maps[j].id)
+
+        # For 2D slice of map
+        for k in range(width):
+
+            # Calculate CC for a pair of 2D layers
+            xCorr = cc(map1[k,:,:], map2[k,:,:])[0][0]
+
+            # Some calculations return nan, ignore them
+            if str(xCorr) != 'nan':
+                single_map_data.append(xCorr)
+
+        # Calculate average cross-correlation value
+        avg = sum(single_map_data)/len(single_map_data)
+        
+        # Append average CC between all layers to data
+        data.append(avg)
+
+    cc_dict = {"data":data,
+               "ids" : ids}
+
+    return cc_dict
+
+def cross_correlate_all():
+
+    # Create two objects of the Data class
+    d1 = Data('../../data/1.0/')
+    d2 = Data('../../data/2.0/')
+
+    # Obtain number of batches
+    NOB = d1.number_of_batches
+
+    # Perform cross-correlation for each batch
+    for i in range(NOB):
+
+        # Load maps
+        d1.load_maps(i)
+        d2.load_maps(i)
+
+        # Perform cross-correlation for batch
+        cc_dict = cross_correlate_batch2D(d1, d2)
+
+        # Unpack dictionary
+
+    return cc_dict 
+    
 
 
 
@@ -84,6 +155,8 @@ class Data:
 if __name__ == '__main__':
     d1 = Data('../../data/1.0/')
     d1.load_batch(0)
+    d2 = Data('../../data/2.0/')
+    d2.load_batch(0)
     #  m1 = Maps('../data/downloads/1.0/')
     #  m2 = Maps('../data/downloads/2.0/')
 
