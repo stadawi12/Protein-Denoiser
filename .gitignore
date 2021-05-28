@@ -17,6 +17,8 @@ data/2.5/*
 !data/1.5/.gitkeep
 !data/2.5/.gitkeep
 
+# Ignore trained models
+trained_models/
 
 # Ignore all output files
 out/*
