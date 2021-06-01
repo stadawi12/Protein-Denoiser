@@ -71,7 +71,7 @@ def download(entry, tail, path=None):
     name_bare  = id_dwnld + '.map'
 
     # path to global directory
-    global_path = '../data/downloads/'
+    global_path = '../../data/'
 
     # path to half_map_x (x = 1 or 2)
     local_path = global_path + half_map_x + '.0/'

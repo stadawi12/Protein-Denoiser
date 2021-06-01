@@ -77,6 +77,141 @@ class Data:
         self.rest_contents = dir_contents
 
 
+def mean_xCorr3D(map1, map2):
+    """Divides half-maps into slices and calculates the 
+    cross correlation between two slices   and  returns 
+    the mean cross-correlation value of all slices.
+
+    Parameters
+    ----------
+    map1 : numpy.ndarray
+        first 3D half-map 
+    map2 : numpy.ndarray
+        second 3D half-map
+        
+    Returns
+    -------
+    mean_xCorr_value : 
+        mean cross-correlation value between two half-maps
+    """
+
+    # Number of 2D layers
+    NO_OF_LAYERS = map1.shape[0]
+
+    # Collect xCorr of each layer
+    xCorrs = []
+
+    # Calculate cross correlation for each layer
+    for i in range(NO_OF_LAYERS):
+
+        # Calculate CC for a pair of 2D layers
+        xCorr = cc(map1[i,:,:], map2[i,:,:])[0][0]
+
+        # Some calculations return nan, ignore them
+        if str(xCorr) != 'nan':
+            single_map_data.append(xCorr)
+
+        # Append cc value to bin
+        xCorrs.append(xCorr)
+
+    # Calculate mean of all xCorrs
+    sum_of_xCorrs = sum(xCorrs)
+    mean_xCorr_value = sum_of_xCorrs / len(xCorrs)
+
+    return mean_xCorr_value
+
+
+def calculate_batch_xCorrs(batch_maps1, batch_maps2):
+    """Wrapper over mean_xCorr3D, calculates   mean
+    cross-correlations of all maps inside the batch
+
+    Parameters
+    ----------
+    data1 : list
+        Data(path).batch_maps: list of all maps inside batch
+        1, each map is an object belonging to the Sample 
+        class.
+    data2 : list
+        Data(path).batch_maps: list of all maps inside batch
+        2, each map is an object belonging to the Sample 
+        class.
+
+    Returns
+    -------
+    xCorr : dict
+        Dictionary containing batch data
+        keys: "ids" and "xcorrs"
+
+    """
+
+    # Creating two bins for holding data
+    BIN_IDS = []        # holds ID of each map in batch
+    BIN_XCORRS = []     # holds xCorr value of each map
+
+    # Obtain number of maps inside batch
+    NO_OF_MAPS = len(batch_maps1)
+    
+    # Assert that 
+
+    # Calculate mean_xCorr3D for all maps in batch
+    for i in range(NO_OF_MAPS):
+
+        # Obtain ID of i'th map
+        ID = batch_maps1.id
+
+        # Append ID to BIN_IDS
+        BIN_IDS.append(ID)
+
+        # Select i'th maps from batches
+        map1 = batch_maps1[i].map
+        map2 = batch_maps2[i].map
+
+        # Calculate mean_xCorr of maps
+        mean_xCorr_value = mean_xCorr3D(map1, map2)
+
+        # Append the mean_xCorr value to the bin
+        BIN_XCORRS.append(mean_xCorr_value)
+
+    # Move binned data to a dictionary
+    xCorr = {"xcorrs":BIN_XCORRS,
+             "ids"   :BIN_IDS}
+
+    # Return dictionary containing data
+    return xCorr
+
+def calculate_xCorr_all(data1, data2):
+    """Wrapper over calculate_batch_xCorrs that calculates
+    and returns all mean_xCorr values for all batches 
+    inside a directory 
+
+    Parameters
+    ----------
+    data1 : __main__.Data
+        object of Data class, deals with a directory of
+        batches, contains all batches of half-maps 1
+    data2 : __main__.Data
+        object of Data class, deals with a directory of
+        batches, contains all batches of half-maps 2
+
+    Returns
+    -------
+
+    """
+    
+    NO_OF_BATCHES = data1.
+
+
+
+
+
+
+
+
+
+
+
+
+
 def cross_correlate_batch2D(batch_1, batch_2):
     """
         i: batch index
