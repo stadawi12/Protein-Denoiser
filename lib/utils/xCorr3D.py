@@ -2,6 +2,7 @@ import numpy as np
 from TEMPy.ScoringFunctions import ScoringFunctions
 from TEMPy.EMMap import Map
 from TEMPy.mapprocess import Filter
+from sort import Maps
 
 mrcfile_import=True
 
@@ -24,10 +25,11 @@ def read_mapfile(map_path):
         emmap.fix_origin()
     return emmap
 
-map_path1 = '../../data/1.5/1.0/0552.map'
-map_path2 = '../../data/1.5/1.0/0552.map'
+m1 = Maps('../../data/1.0/')
+m2 = Maps('../../data/2.0/')
 
-sc = ScoringFunctions()
-emmap1 = read_mapfile(map_path1)
-emmap2 = read_mapfile(map_path2)
-ccc,overlap = sc.CCC_map(emmap1,emmap2)
+# sc = ScoringFunctions()
+# emmap1 = read_mapfile(map_path1)
+# emmap2 = read_mapfile(map_path2)
+# ccc,overlap = sc.CCC_map(emmap1,emmap2)
+# print "ccc: {}, overlap: {}".format(ccc,overlap)

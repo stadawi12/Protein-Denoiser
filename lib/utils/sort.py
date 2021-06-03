@@ -79,7 +79,7 @@ class Maps:
         assert self.rest == [], "self.rest is not empty"
         dirs = []
         for i in range(number_of_dirs):
-            dirs.append(f'{i+1}.0')
+            dirs.append('{}.0'.format(i+1))
         for d in dirs:
             os.mkdir(self.path_global + d)
         self.ls = os.listdir(self.path_global)

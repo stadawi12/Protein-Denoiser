@@ -179,37 +179,26 @@ def calculate_batch_xCorrs(batch_maps1, batch_maps2):
     # Return dictionary containing data
     return xCorr
 
-def calculate_xCorr_all(data1, data2):
-    """Wrapper over calculate_batch_xCorrs that calculates
-    and returns all mean_xCorr values for all batches 
-    inside a directory 
-
-    Parameters
-    ----------
-    data1 : __main__.Data
-        object of Data class, deals with a directory of
-        batches, contains all batches of half-maps 1
-    data2 : __main__.Data
-        object of Data class, deals with a directory of
-        batches, contains all batches of half-maps 2
-
-    Returns
-    -------
-
-    """
-    
-    NO_OF_BATCHES = data1.
-
-
-
-
-
-
-
-
-
-
-
+# def calculate_xCorr_all(data1, data2):
+#     """Wrapper over calculate_batch_xCorrs that calculates
+#     and returns all mean_xCorr values for all batches 
+#     inside a directory 
+# 
+#     Parameters
+#     ----------
+#     data1 : __main__.Data
+#         object of Data class, deals with a directory of
+#         batches, contains all batches of half-maps 1
+#     data2 : __main__.Data
+#         object of Data class, deals with a directory of
+#         batches, contains all batches of half-maps 2
+# 
+#     Returns
+#     -------
+# 
+#     """
+#     
+#     NO_OF_BATCHES = data1.
 
 
 def cross_correlate_batch2D(batch_1, batch_2):
