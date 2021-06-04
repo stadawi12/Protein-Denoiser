@@ -20,6 +20,7 @@ class Maps:
         for name in self.ls:
             if '.map' in name:
                 self.maps.append(name)
+        self.maps.sort()
 
     def set_random(self):
         """
@@ -227,5 +228,6 @@ class Maps:
 if __name__ == '__main__':
     m1 = Maps('../../data/1.0/')
     m2 = Maps('../../data/2.0/')
-    print(m1.ls)
-    print(m2.ls)
+    print(m1.maps == m2.maps)
+    print(len(m1.maps))
+    print(len(m2.maps))
