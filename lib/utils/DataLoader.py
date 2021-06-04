@@ -277,65 +277,65 @@ def cross_correlate_all():
 
 
 if __name__ == '__main__':
+    # d1 = Data('../../data/1.0/')
+    # d1.load_batch(0)
+    # d2 = Data('../../data/2.0/')
+    # d2.load_batch(0)
+    m1 = Maps('../../data/1.0/')
+    m2 = Maps('../../data/2.0/')
+
+    def plot(map1,map2, i):
+        fig, ax = plt.subplots(2)
+        ax[0].imshow(map1[i,:,:])
+        ax[1].imshow(map2[i,:,:])
+        return plt.show()
+
+    def select(xCorr_data, ids, threshold):
+        """
+            Anything below the threshold will be
+            ouptut
+        """
+        bad_xCorrs = []
+        bad_ids = []
+        for i, xCorr in enumerate(xCorr_data):
+            if xCorr < threshold:
+                bad_xCorrs.append(xCorr)
+                bad_ids.append(ids[i])
+
+        dic = {"bad_xCorrs": bad_xCorrs,
+               "bad_ids": bad_ids}
+
+        return dic
+
+
+    import matplotlib.pyplot as plt
     d1 = Data('../../data/1.0/')
-    d1.load_batch(0)
     d2 = Data('../../data/2.0/')
-    d2.load_batch(0)
-    #  m1 = Maps('../data/downloads/1.0/')
-    #  m2 = Maps('../data/downloads/2.0/')
-
-    #  def plot(map1,map2, i):
-    #      fig, ax = plt.subplots(2)
-    #      ax[0].imshow(map1[i,:,:])
-    #      ax[1].imshow(map2[i,:,:])
-    #      return plt.show()
-
-    #  def select(xCorr_data, ids, threshold):
-    #      """
-    #          Anything below the threshold will be
-    #          ouptut
-    #      """
-    #      bad_xCorrs = []
-    #      bad_ids = []
-    #      for i, xCorr in enumerate(xCorr_data):
-    #          if xCorr < threshold:
-    #              bad_xCorrs.append(xCorr)
-    #              bad_ids.append(ids[i])
-
-    #      dic = {"bad_xCorrs": bad_xCorrs,
-    #             "bad_ids": bad_ids}
-
-    #      return dic
+    d3 = Data('../../data/1.5/')
+    d3.load_batch(0)
+    print(d1.maps)
+    print(d2.maps)
+    data = []
+    ids = []
+    for i in range(len(d1.ls)):
+        d1.load_maps(i)
+        d2.load_maps(i)
+        print("Calculating cross-correlations...")
+        for j in range(len(d1.batch_maps)):
+            map1 = d1.batch_maps[j].map
+            map2 = d2.batch_maps[j].map
+            width = map1.shape[0]
+            single_map_data = []
+            ids.append(d1.batch_maps[j].id)
+            for k in range(width):
+                xCorr = cc(map1[k,:,:],
+                                           map2[k,:,:])[0][0]
+                if str(xCorr) != 'nan':
+                    single_map_data.append(xCorr)
 
 
-    #  import matplotlib.pyplot as plt
-    #  d1 = Data('../data/downloads/1.0/')
-    #  d2 = Data('../data/downloads/2.0/')
-    #  d3 = Data('../data/downloads/1.5/')
-    #  d3.load_batch(0)
-    #  print(d1.maps)
-    #  print(d2.maps)
-    #  data = []
-    #  ids = []
-    #  for i in range(len(d1.ls)):
-    #      d1.load_maps(i)
-    #      d2.load_maps(i)
-    #      print("Calculating cross-correlations...")
-    #      for j in range(len(d1.batch_maps)):
-    #          map1 = d1.batch_maps[j].map
-    #          map2 = d2.batch_maps[j].map
-    #          width = map1.shape[0]
-    #          single_map_data = []
-    #          ids.append(d1.batch_maps[j].id)
-    #          for k in range(width):
-    #              xCorr = cc.cross_correlate(map1[k,:,:],
-    #                                         map2[k,:,:])[0][0]
-    #              if str(xCorr) != 'nan':
-    #                  single_map_data.append(xCorr)
-
-
-    #          avg = sum(single_map_data)/len(single_map_data)
-    #          data.append(avg)
-    #  print("Finished!")
-    #  print(f"Output: 'data' and 'ids'")
-    #  print(f"Use the select(data, ids, threshold) function to choose the pairs of maps you would like to get rid of.")
+            avg = sum(single_map_data)/len(single_map_data)
+            data.append(avg)
+    print("Finished!")
+    print(f"Output: 'data' and 'ids'")
+    print(f"Use the select(data, ids, threshold) function to choose the pairs of maps you would like to get rid of.")

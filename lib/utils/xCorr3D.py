@@ -25,11 +25,39 @@ def read_mapfile(map_path):
         emmap.fix_origin()
     return emmap
 
-m1 = Maps('../../data/1.0/')
-m2 = Maps('../../data/2.0/')
+if __name__ == '__main__':
 
-# sc = ScoringFunctions()
-# emmap1 = read_mapfile(map_path1)
-# emmap2 = read_mapfile(map_path2)
-# ccc,overlap = sc.CCC_map(emmap1,emmap2)
-# print "ccc: {}, overlap: {}".format(ccc,overlap)
+    m1 = Maps('../../data/1.0/')
+    m2 = Maps('../../data/2.0/')
+
+    m1.paths = [m1.path_global + m for m in m1.maps]
+
+    m2.paths = [m2.path_global + m for m in m2.maps]
+
+    maps = m1.maps
+
+    sc = ScoringFunctions()
+    NO_OF_MAPS = len(m1.maps)
+
+    data = []
+    ids = []
+
+    for i in range(NO_OF_MAPS):
+        map_id = m1.maps[i][:-4]
+        emmap1 = read_mapfile(m1.paths[i])
+        emmap2 = read_mapfile(m2.paths[i])
+        ccc,overlap = sc.CCC_map(emmap1,emmap2)
+        print "map id: {}, ccc: {}, overlap: {}".format(
+                map_id,ccc,overlap)
+        data.append(ccc)
+        ids.append(map_id)
+
+    for i in range(NO_OF_MAPS):
+        print(i)
+        map_id = maps[i]
+        if data[i] <= 0.8:
+            m1.move_to_bad(map_id)
+            m2.move_to_bad(map_id)
+
+
+
