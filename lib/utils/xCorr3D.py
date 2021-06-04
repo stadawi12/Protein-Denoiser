@@ -43,6 +43,7 @@ if __name__ == '__main__':
     ids = []
 
     for i in range(NO_OF_MAPS):
+        assert m1.maps[i] == m2.maps[i], "Unlucky bro"
         map_id = m1.maps[i][:-4]
         emmap1 = read_mapfile(m1.paths[i])
         emmap2 = read_mapfile(m2.paths[i])
@@ -55,7 +56,7 @@ if __name__ == '__main__':
     for i in range(NO_OF_MAPS):
         print(i)
         map_id = maps[i]
-        if data[i] <= 0.8:
+        if data[i] <= 0.95:
             m1.move_to_bad(map_id)
             m2.move_to_bad(map_id)
 
