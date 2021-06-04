@@ -32,7 +32,7 @@ def validate(test_data1, test_data2, device, unet):
 def create_directory(name_of_directory):
     original_length = len(name_of_directory)
     count = 0 
-    old_directories = os.listdir("trained_models")
+    old_directories = os.listdir("../out/")
     if name_of_directory in old_directories:
         while name_of_directory in old_directories:
             count += 1
@@ -42,9 +42,9 @@ def create_directory(name_of_directory):
                 name_of_directory = list(name_of_directory)
                 name_of_directory[-1] = str(count)
                 name_of_directory = "".join(name_of_directory)
-        os.mkdir(f"trained_models/{name_of_directory}")
+        os.mkdir(f"../out/{name_of_directory}")
     else:
-        os.mkdir(f"trained_models/{name_of_directory}")
+        os.mkdir(f"../out/{name_of_directory}")
 
     return name_of_directory
 
