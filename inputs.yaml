@@ -5,3 +5,8 @@ no_of_batches : 1
 device : "cuda:0"
 tail : ''
 loss_index : 0
+cshape : 64
+norm_vox : 1.4
+norm_vox_min : 1.4
+norm_vox_max : 1.4
+

@@ -29,17 +29,17 @@ class Data:
         self.batch_maps = None
 
 
-    def load_batch(self, i, n=None):
+    def load_batch(self, i, cshape=64, norm_vox=1.4,
+            norm_vox_lim=(1.4, 1.4), n=None):
         self.batch_id = i
         self.batch = None
         data = load_data(self.path_global, [self.ls[i]], n)
-
         data = preproces_data(data,
                 norm=True,
                 mode='tile',
-                cshape=64,
-                norm_vox=1.4,
-                norm_vox_lim=(1.4,1.4)
+                cshape=cshape,
+                norm_vox=norm_vox,
+                norm_vox_lim=norm_vox_lim
                 )
 
         self.batch = data

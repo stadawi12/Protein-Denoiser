@@ -46,7 +46,11 @@ def Train(Network, input_data, data_path='data', out_path='out'):
     # Input data
     learning_rate = input_data["lr"]
     no_of_batches = input_data["no_of_batches"]
+    norm_vox_lim  =(input_data["norm_vox_min"],
+                    input_data["norm_vox_max"])
     loss_index    = input_data["loss_index"]
+    norm_vox      = input_data["norm_vox"]
+    cshape        = input_data["cshape"]
     device        = torch.device(input_data["device"])
     epochs        = input_data["epochs"]
     tail          = input_data["tail"]
@@ -103,8 +107,15 @@ def Train(Network, input_data, data_path='data', out_path='out'):
             # generate validation loss before starting each epoch
             if b == 0:
                 # Load testing batch
-                test1_data.load_batch(0)
-                test2_data.load_batch(0)
+                test1_data.load_batch(0, 
+                        cshape=cshape,
+                        norm_vox=norm_vox,
+                        norm_vox_lim=norm_vox_lim)
+                test2_data.load_batch(0, 
+                        cshape=cshape,
+                        norm_vox=norm_vox,
+                        norm_vox_lim=norm_vox_lim)
+
                 # Obtain validation loss
                 validationLoss = ut.validate(test1_data.tiles, 
                         test2_data.tiles, device, unet)
@@ -113,8 +124,14 @@ def Train(Network, input_data, data_path='data', out_path='out'):
             
             # Load correspodning batch of training maps
             # Data().tiles contains tiles of maps already
-            input_maps.load_batch(b)
-            trget_maps.load_batch(b)
+            input_maps.load_batch(b,
+                        cshape=cshape,
+                        norm_vox=norm_vox,
+                        norm_vox_lim=norm_vox_lim)
+            trget_maps.load_batch(b,
+                        cshape=cshape,
+                        norm_vox=norm_vox,
+                        norm_vox_lim=norm_vox_lim)
 
             # Pass mbs tiles through network
             for i in range(0, input_maps.tiles.shape[0], mbs):
