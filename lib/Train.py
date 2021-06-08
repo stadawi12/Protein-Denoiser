@@ -26,9 +26,6 @@ def Train(Network, input_data, data_path='data', out_path='out'):
         A dictionary containing all necessary variables
 
     """
-    # Load parser
-    args = train_parser()
-
     # Paths to trainig and test data
     input_path = os.path.join(data_path, '1.0')
     trget_path = os.path.join(data_path, '2.0')
