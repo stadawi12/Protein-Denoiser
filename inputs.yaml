@@ -6,7 +6,12 @@ lr            : 0.001       # learning rate
 tail          : ''          # tail to add to your output filename
 loss_index    : 0           # loss funct. 0 for mse 4 for mse^2
 cshape        : 64          # size of tiles
+margin        : 8           # margin
+norm          : True        # normalise maps between 0 to 1?
 norm_vox      : 1.4         # voxel size
 norm_vox_min  : 1.4         # voxel size limit minimum
 norm_vox_max  : 1.4         # voxel size limit maximum
+proc_model    : ""          # model to be used for processing
+proc_epoch    : 1           # epoch of model for processing
+proc_map_name : "0552.map"  # map to be denoised
 
