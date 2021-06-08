@@ -18,8 +18,9 @@ class Data:
             self.ls.remove('.gitkeep')
         self.ls = [float(f) for f in self.ls]
         self.ls.sort()
-        self.maps = [os.listdir(self.path_global + 
-            str(f)) for f in self.ls]
+        self.maps = [os.listdir(
+            os.path.join(self.path_global, 
+            str(f))) for f in self.ls]
         self.no_of_batches = len(self.ls)
         self.batch_id = None
         self.tiles = None
@@ -67,7 +68,7 @@ class Data:
         # obtains the contents of the sub directories of
         # the global directory, stores the in 
         # self.rest_contents
-        dir_paths = [self.path_global + str(b) + '/' \
+        dir_paths = [os.path.join(self.path_global, str(b)) 
                 for b in self.ls]
         dir_contents = [os.listdir(dir_path) 
                 for dir_path in dir_paths]

@@ -1,146 +1,183 @@
+# Standard library imports
 import sys
 sys.path.insert(1, 'utils/ml_toolbox/src/')
-
-# Torch imports
-import torch
 import torch.nn.functional as F
-
-# Import os module to deal with files
-import argparse
-import os
 import torch.optim as optim
+import argparse
+import torch
+import yaml
 import time
+import os
 
-import utils.utils_train as ut
-
-# Load custom made DataLoader
+# Custome module imports
 from utils.DataLoader import Data
-
-# Load all architectures
+import utils.utils_train as ut
 from net import unet
+from parsers import train_parser
 
-parser = argparse.ArgumentParser()
+def Train(Network, input_data, data_path='data', out_path='out'):
+    """Trains a noise2noise model on protein half-maps
 
-parser.add_argument('-e', '--epochs', type=int,
-        help="Number of epochs", default=1)
+    Parameters
+    ----------
+    data_path : str
+        Path to the data folder
+    input_data : dict
+        A dictionary containing all necessary variables
 
-parser.add_argument('-mbs', '--minibatchsize', type=int,
-        default=3, help="Mini Batch Size")
+    """
+    # Load parser
+    args = train_parser()
 
-parser.add_argument('-d', '--numberofdirs', type=int,
-        default=1, help="Number of directories")
+    # Paths to trainig and test data
+    input_path = os.path.join(data_path, '1.0')
+    trget_path = os.path.join(data_path, '2.0')
+    test1_path = os.path.join(data_path, '1.5')
+    test2_path = os.path.join(data_path, '2.5')
 
-parser.add_argument('-t', '--tail', type=str,
-        default='', help="Tail to add to the filename")
+    # Objects for dealing with training data 
+    input_maps = Data(input_path)
+    trget_maps = Data(trget_path)
 
-args = parser.parse_args()
+    # Objects for dealing with testing data 
+    test1_data = Data(test1_path)
+    test2_data = Data(test2_path)
 
-# Check if machine has a GPU
-if torch.cuda.is_available():
-    dev = "cuda:0"
-    device = torch.device(dev)
-else:
-    dev = "cpu"
-    device = torch.device(dev)
+    # Input data
+    learning_rate = input_data["lr"]
+    no_of_batches = input_data["no_of_batches"]
+    loss_index    = input_data["loss_index"]
+    device        = torch.device(input_data["device"])
+    epochs        = input_data["epochs"]
+    tail          = input_data["tail"]
+    mbs           = input_data["mbs"] # Mini batch size
 
-# Paths to data
-PATH_1 = "../data/1.0/"
-PATH_2 = "../data/2.0/"
+    # If no_of_batches=0, use all batches, else, use custom amount
+    if no_of_batches == 0:
+        no_of_batches = len(input_maps.ls)
+    else:
+        no_of_batches = no_of_batches
 
+    # Model (UNET)
+    unet = Network.UNet()
+    unet = unet.to(device)
 
-# Creating objects of Data class
-input_maps = Data(PATH_1)
-trget_maps = Data(PATH_2)
+    # Optimiser
+    optimiser = optim.Adam(unet.parameters(), lr=learning_rate)
 
+    # start timer
+    tic = time.perf_counter()
 
-# Model (UNET)
-unet = unet.UNet()
-unet = unet.to(device)
-# Optimiser
-lr = 0.001  # learning rate
-optimiser = optim.Adam(unet.parameters(), lr=lr)
+    # My implementation of a custom loss function
+    def my_loss(output, target, power):
+        loss = torch.mean((torch.abs(output - target))**power)
+        return loss
 
-EPOCHS = args.epochs
-mbs = args.minibatchsize   # mini-batch-size
-
-globalPath = '../data/' # global path to maps
-
-
-d1 = Data(globalPath+'1.0/')
-d2 = Data(globalPath+'2.0/')
-
-test1 = Data(globalPath+'1.5/')
-test2 = Data(globalPath+'2.5/')
-
-
-# start timer
-tic = time.perf_counter()
-
-trainingLosses = []
-validationLosses = []
-
-if args.numberofdirs == None:
-    numberofdirs = len(d1.ls)
-else:
-    numberofdirs = args.numberofdirs
-
-def my_loss(output, target, power):
-    loss = torch.mean((torch.abs(output - target))**power)
-    return loss
-
-
-number_of_maps = 0
-for i in range(numberofdirs):
-    number_of_maps += d1.batch_sizes[i]
-
-dir_name = f"m{number_of_maps}_e{EPOCHS}_mbs{mbs}"
-dir_name = dir_name + args.tail
-
-dir_name = ut.create_directory(dir_name)
+    # CREATE FOLDER FOR OUTPUT FILES IN ../out/
+    # Get number of maps being trained on
+    number_of_maps = 0
+    for i in range(no_of_batches):
+        number_of_maps += input_maps.batch_sizes[i]
+    # Construct name of directory
+    dir_name = f"m{number_of_maps}_e{epochs}_mbs{mbs}"
+    # Add tail to directory if specified in arguments
+    dir_name = dir_name + tail
+    # Generate output directory
+    dir_name = ut.create_directory(out_path, dir_name)
 
 
-for e in range(EPOCHS):
-    # powers = np.arange(2,4+0.0001,(4-2)/(EPOCHS-1))
-    
-    trainingLoss = []
+    # Bins for storing computed losses and validation losses
+    trainingLosses = []
+    validationLosses = []
 
-    for b in range(numberofdirs):
+    # BEGIN TRAINING LOOP
+    # For each epoch
+    for e in range(epochs):
+        
+        # Create a bin for storing epoch training losses
+        trainingLoss = []
 
-        d1.load_batch(b)
-        d2.load_batch(b)
+        # For each batch
+        for b in range(no_of_batches):
 
-        # Training loop
-        for i in range(0, d1.tiles.shape[0], mbs):
             # generate validation loss before starting each epoch
-            # if i == 0:
-            #     validationLoss = ut.validate(test1, test2, 
-            #             device, unet)
-            #     validationLosses.append(validationLoss)
+            if b == 0:
+                # Load testing batch
+                test1_data.load_batch(0)
+                test2_data.load_batch(0)
+                # Obtain validation loss
+                validationLoss = ut.validate(test1_data.tiles, 
+                        test2_data.tiles, device, unet)
+                # Append validation loss to validation losses
+                validationLosses.append(validationLoss)
+            
+            # Load correspodning batch of training maps
+            # Data().tiles contains tiles of maps already
+            input_maps.load_batch(b)
+            trget_maps.load_batch(b)
 
-            x = d1.tiles[i:i+mbs, 0:1, :, :, :]
-            x = x.to(device)
-            y = d2.tiles[i:i+mbs, 0:1, :, :, :]
-            y = y.to(device)
-            unet.zero_grad()
-            out = unet(x)
-            loss = F.mse_loss(out ,y)
-            # loss = my_loss(out, y, 4)
-            trainingLoss.append(loss.item())
-            print(f'{i}: {loss}, {e}')
-            loss.backward()
-            optimiser.step()
+            # Pass mbs tiles through network
+            for i in range(0, input_maps.tiles.shape[0], mbs):
+                
+                # Grab mbs number of input tiles
+                x = input_maps.tiles[i:i+mbs, 0:1, :, :, :]
+                x = x.to(device)
+                # Grab mbs number of target tiles 
+                y = trget_maps.tiles[i:i+mbs, 0:1, :, :, :]
+                y = y.to(device)
+                # Pass input tiles through network
+                unet.zero_grad()
+                out = unet(x)
 
-    sum_of_trainingLosses = sum(trainingLoss)
-    epoch_trainingLoss = sum_of_trainingLosses / len(trainingLoss)
-    trainingLosses.append(epoch_trainingLoss)
+                # Pick loss function
+                if loss_index == 0:
+                    # Calculate torch loss
+                    loss = F.mse_loss(out ,y)
+                else:
+                    # Calculate custom loss
+                    loss = my_loss(out, y, loss_index)
 
-    # OUTPUT MODELS EVERY 5TH EPOCH
-    # After first epoch
-    # And ensure to output model after all epochs have passed
+                # Append training loss to bin
+                trainingLoss.append(loss.item())
+                # Print loss
+                print(
+                    f'epoch: {e+1}/{epochs}, ' +
+                    f'batch: {b+1}/{no_of_batches}, ' +
+                    f'tiles: {i}/{len(input_maps.tiles)}, ' + 
+                    f'loss: {loss:.6}, '
+                    )
 
-    ut.save_model2(dir_name, e+1, unet)
+                # Backward propagation
+                loss.backward()
+                optimiser.step()
 
-# end timer
-toc = time.perf_counter()
+        # OBTAIN AVERAGE OF TRAINING LOSS FOR THE EPOCH
+        sum_of_trainingLosses = sum(trainingLoss)
+        epoch_trainingLoss = sum_of_trainingLosses / len(trainingLoss)
+        trainingLosses.append(epoch_trainingLoss)
+        
+        # At end of EPOCH, save model to ../out
+        ut.save_model2(out_path, dir_name, e+1, unet)
+        
+        # For each EPOCH save plots of training vs validation
+        # Create dictionary of loss data
+        plot_data = {"validationLosses": validationLosses,
+                     "trainingLosses"  : trainingLosses}
+        # save plot in ../out/plots/
+        ut.save_plot(out_path, dir_name, plot_data, e)
 
-print(f"time: {(toc-tic) / 60}m")
+
+    # end timer
+    toc = time.perf_counter()
+
+    return print(f"time: {(toc-tic) / 60}m")
+
+if __name__ == '__main__':
+
+    from utils.Inputs import Read_Input
+    from net import unet
+    
+
+    input_data = Read_Input('../inputs.yaml')
+    Train(unet, input_data, out_path='../out', data_path='../data')
+

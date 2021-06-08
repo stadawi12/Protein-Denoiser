@@ -1,0 +1,7 @@
+lr : 0.001
+epochs : 1
+mbs : 3
+no_of_batches : 1
+device : "cuda:0"
+tail : ''
+loss_index : 0

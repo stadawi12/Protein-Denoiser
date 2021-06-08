@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 def validate(test_data1, test_data2, device, unet):
     assert test_data1.shape == test_data2.shape
     
-    batchNorm = torch.nn.BatchNorm3d(1, affine=False)
+    # batchNorm = torch.nn.BatchNorm3d(1, affine=False)
     n_tiles = test_data1.shape[0]
     losses = []
     # run validation
@@ -29,10 +29,10 @@ def validate(test_data1, test_data2, device, unet):
     return epoch_loss
 
 
-def create_directory(name_of_directory):
+def create_directory(out_path, name_of_directory):
     original_length = len(name_of_directory)
     count = 0 
-    old_directories = os.listdir("../out/")
+    old_directories = os.listdir(out_path)
     if name_of_directory in old_directories:
         while name_of_directory in old_directories:
             count += 1
@@ -42,41 +42,70 @@ def create_directory(name_of_directory):
                 name_of_directory = list(name_of_directory)
                 name_of_directory[-1] = str(count)
                 name_of_directory = "".join(name_of_directory)
-        os.mkdir(f"../out/{name_of_directory}")
+        os.mkdir(os.path.join(out_path, name_of_directory))
     else:
-        os.mkdir(f"../out/{name_of_directory}")
+        os.mkdir(os.path.join(out_path, name_of_directory))
 
     return name_of_directory
 
 
-def save_model2(name_of_directory, epoch, unet):
+def save_model2(out_path, name_of_directory, epoch, unet):
+    path_to_data = os.path.join(out_path, name_of_directory)
+    if 'models' not in os.listdir(path_to_data):
+        os.mkdir(os.path.join(path_to_data, 'models'))
     torch.save(unet.state_dict(),
-            f"trained_models/{name_of_directory}/epoch_{epoch}.pt")
+            os.path.join(out_path, name_of_directory, 'models',
+                f'epoch_{epoch}.pt'))
 
 
-def save_plots(filename, trainingLosses, validationLosses):
-    og_length = len(filename)
-    count = 0
-    lo_contents = os.listdir("losses")
-    if filename+".png" in lo_contents:
-        while filename+".png" in lo_contents:
-            count += 1
-            if len(filename) == og_length:
-                filename += f"_{count}"
-            else:
-                filename = list(filename)
-                filename[-1] = str(count)
-                filename = "".join(filename)
-        plt.plot(trainingLosses, label="Training Loss")
-        plt.plot(validationLosses, label="Validation Loss")
-        plt.legend(loc="upper right")
-        plt.xlabel("Epoch")
-        plt.ylabel("MSE-Loss")
-        plt.savefig("losses/"+filename+".png")
-    else:
-        plt.plot(trainingLosses, label="Training Loss")
-        plt.plot(validationLosses, label="Validation Loss")
-        plt.legend(loc="upper right")
-        plt.xlabel("Epoch")
-        plt.ylabel("MSE-Loss")
-        plt.savefig("losses/"+filename+".png")
+def plot_losses(plot_data : dict):
+    """Constructs training vs validation loss curves.
+
+    Parameter
+    ---------
+    plot_data : dict
+        Dictionary containing the two datasets, training losses
+        and validation losses.
+
+    Returns
+    -------
+    fig : Figure
+        Object Figure which can be used to     
+
+    """
+    validationLosses = plot_data["validationLosses"]
+    trainingLosses = plot_data["trainingLosses"]
+    fig, ax = plt.subplots()
+    ax.plot(trainingLosses, label="Training Loss")
+    ax.plot(validationLosses, label="Validation Loss")
+    ax.legend(loc="upper right")
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Loss")
+    return fig
+    
+
+def save_plot(out_path, local_path, plot_data, epoch):
+    """Saves plot to ../out/plots/e_{epoch}.png
+
+    Parameters
+    ----------
+    local_path : str
+        name of the training directory containing all output
+        files of the trainig network
+    plot_data  : dict
+        Dictionary containing training and validation loss
+        data
+    epoch      : int
+        The epoch that we are currently in.
+            
+    """
+    # Global ../out/ directory for all different training runs
+    path_to_plots = os.path.join(out_path,local_path,'plots')
+
+    if 'plots' not in os.listdir(
+            os.path.join(out_path,local_path)):
+        os.mkdir(path_to_plots)
+
+    fig = plot_losses(plot_data)
+    path_of_plot = os.path.join(path_to_plots,f"e_{epoch}.png")
+    fig.savefig(path_of_plot)
