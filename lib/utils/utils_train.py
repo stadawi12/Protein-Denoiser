@@ -107,5 +107,5 @@ def save_plot(out_path, local_path, plot_data, epoch):
         os.mkdir(path_to_plots)
 
     fig = plot_losses(plot_data)
-    path_of_plot = os.path.join(path_to_plots,f"e_{epoch}.png")
+    path_of_plot = os.path.join(path_to_plots,f"e_{epoch+1}.png")
     fig.savefig(path_of_plot)

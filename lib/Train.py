@@ -46,6 +46,7 @@ def Train(Network, input_data, data_path='data', out_path='out'):
                     input_data["norm_vox_max"])
     loss_index    = input_data["loss_index"]
     norm_vox      = input_data["norm_vox"]
+    validate      = input_data["validate"]
     cshape        = input_data["cshape"]
     device        = torch.device(input_data["device"])
     epochs        = input_data["epochs"]
@@ -101,22 +102,23 @@ def Train(Network, input_data, data_path='data', out_path='out'):
         for b in range(no_of_batches):
 
             # generate validation loss before starting each epoch
-            if b == 0:
-                # Load testing batch
-                test1_data.load_batch(0, 
-                        cshape=cshape,
-                        norm_vox=norm_vox,
-                        norm_vox_lim=norm_vox_lim)
-                test2_data.load_batch(0, 
-                        cshape=cshape,
-                        norm_vox=norm_vox,
-                        norm_vox_lim=norm_vox_lim)
+            if validate:
+                if b == 0:
+                    # Load testing batch
+                    test1_data.load_batch(0, 
+                            cshape=cshape,
+                            norm_vox=norm_vox,
+                            norm_vox_lim=norm_vox_lim)
+                    test2_data.load_batch(0, 
+                            cshape=cshape,
+                            norm_vox=norm_vox,
+                            norm_vox_lim=norm_vox_lim)
 
-                # Obtain validation loss
-                validationLoss = ut.validate(test1_data.tiles, 
-                        test2_data.tiles, device, unet)
-                # Append validation loss to validation losses
-                validationLosses.append(validationLoss)
+                    # Obtain validation loss
+                    validationLoss = ut.validate(test1_data.tiles, 
+                            test2_data.tiles, device, unet)
+                    # Append validation loss to validation losses
+                    validationLosses.append(validationLoss)
             
             # Load correspodning batch of training maps
             # Data().tiles contains tiles of maps already
@@ -141,6 +143,7 @@ def Train(Network, input_data, data_path='data', out_path='out'):
                 # Pass input tiles through network
                 unet.zero_grad()
                 out = unet(x)
+                print(f"min,max: {torch.min(out)},{torch.max(out)}")
 
                 # Pick loss function
                 if loss_index == 0:

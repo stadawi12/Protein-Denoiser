@@ -77,6 +77,7 @@ class Process:
                 print(f"tile: {i}")
                 tile = tile.to(self.device)
                 out = unet(tile)
+                print(f"min,max: {torch.min(out)},{torch.max(out)}")
                 outs.append(out)
         
         # convert output tiles from tensor to numpy arrays
@@ -86,8 +87,15 @@ class Process:
         # assign to pred
         # recompose
         sample.pred = outs_np
+        sample.tiles = outs_np
+        print(f"type of sample.pred: {type(sample.pred)}")
+        print(f"pred min: {np.min(sample.pred)}")
+        print(f"pred max: {np.max(sample.pred)}")
         sample.recompose()
+        print(f"type of sample.pred: {type(sample.pred)}")
         sample.map = sample.pred
+        print(f"min: {np.min(sample.map)}")
+        print(f"max: {np.max(sample.map)}")
 
         # path to outputs
         path = self.training_outputs_path
@@ -133,7 +141,10 @@ class Process:
         lst = [tile.unsqueeze(0).unsqueeze(0) for tile in lst]
         return lst
 
-
+if __name__ == '__main__':
+    input_data = Read_Input('../inputs.yaml')
+    p1 = Process(unet, input_data, out_path='../out', 
+            data_path='../data')
 
 
 
