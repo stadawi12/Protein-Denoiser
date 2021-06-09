@@ -5,8 +5,9 @@ sys.path.insert(1, 'utils/ml_toolbox/src/')
 sys.path.insert(1, 'net')
  
 # utils imports 
-from unet import UNet
+import unet
 from proteins import Sample
+from Inputs import Read_Input
 
 # library imports
 import torch
@@ -17,15 +18,11 @@ import pandas as pd
 import argparse
 import os
 
-def list_to_torch(lst):
-    lst = [torch.from_numpy(tile) for tile in lst]
-    lst = [tile.unsqueeze(0).unsqueeze(0) for tile in lst]
-    return lst
 
 class Process:
 
     def __init__(self, Network, input_data, 
-            out_path = '../out', data_path = '../data'):
+            out_path = 'out', data_path = 'data'):
 
         # INITS
         self.Network = Network
@@ -59,15 +56,16 @@ class Process:
         # Load tiles
         sample = self.load_map(self.proc_map_name)
         tiles = sample.tiles
+        tiles = self.to_torch_list(tiles)
 
         # Load model
-        unet = self.Network.UNet
+        unet = self.Network.UNet()
         # Load the trained unet model
-        unet.load_state_dict(torch.load(self.model_path,
+        unet.load_state_dict(torch.load(self.models_path,
             map_location=self.device))
         unet = unet.to(self.device)  # move unet to device
 
-        print("Testing model...")
+        print(f"Denoising {self.proc_map_name}...")
         outs = []
         with torch.no_grad():
             """
@@ -77,7 +75,7 @@ class Process:
             """
             for i, tile in enumerate(tiles):
                 print(f"tile: {i}")
-                tile = tile.to(device)
+                tile = tile.to(self.device)
                 out = unet(tile)
                 outs.append(out)
         
@@ -97,10 +95,8 @@ class Process:
             os.mkdir(os.path.join(path,'denoised'))
 
         sample.save_map(os.path.join(path,'denoised',
-            f"epoch_{self.proc_epoch}.map")
-        print(f"Saved map to: data/downloads/1.0preds/{model[:-3]}.map")
-
-
+            f"e_{self.proc_epoch}_{self.proc_map_name}"))
+        print(f"Saved map to: out/{self.proc_model}/denoised/e_{self.proc_epoch}_{self.proc_map_name}")
 
 
     def get_path_to_models(self):
@@ -131,6 +127,11 @@ class Process:
                 norm_vox     = self.norm_vox,
                 norm_vox_lim = self.norm_vox_lim)
         return sample
+
+    def to_torch_list(self, lst):
+        lst = [torch.from_numpy(tile) for tile in lst]
+        lst = [tile.unsqueeze(0).unsqueeze(0) for tile in lst]
+        return lst
 
 
 

@@ -5,6 +5,7 @@ sys.path.insert(1, 'lib/utils/ml_toolbox/src')
 sys.path.insert(1, 'lib/net')
 
 from Train import Train
+from Process import Process
 from Inputs import Read_Input, Create_Parser
 import unet
 
@@ -25,4 +26,8 @@ if __name__ == '__main__':
 
     if args.action == 'proc':
 
-        print("Sorry, come back when this has been developed!")
+        p1 = Process(unet, input_data)
+        p1.process()
+
+
+

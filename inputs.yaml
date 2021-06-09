@@ -1,6 +1,6 @@
-epochs        : 1           # number of epochs
+epochs        : 2           # number of epochs
 mbs           : 3           # mini batch size 
-no_of_batches : 1           # number of batches, use 0 for all
+no_of_batches : 0           # number of batches, use 0 for all
 device        : "cuda:0"    # device 'cpu' or 'cuda:0'
 lr            : 0.001       # learning rate
 tail          : ''          # tail to add to your output filename
@@ -11,7 +11,9 @@ norm          : True        # normalise maps between 0 to 1?
 norm_vox      : 1.4         # voxel size
 norm_vox_min  : 1.4         # voxel size limit minimum
 norm_vox_max  : 1.4         # voxel size limit maximum
-proc_model    : ""          # model to be used for processing
+
+# model to be used for denoising
+proc_model    : 'm2_e2_mbs3'
 proc_epoch    : 1           # epoch of model for processing
 proc_map_name : "0552.map"  # map to be denoised
 
