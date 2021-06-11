@@ -235,8 +235,8 @@ class Sample:
                 os.mkdir('/'.join(gpath[:-1]))
         if self.has_tiles:
             self.recompose()
-        amino_map(self.pred, self.header_pred.orig, self.header_pred.cell, path=path, overwrite=True)
-        # save_map(self.pred, self.header_pred.orig, self.header_pred.cell, path=path)
+        # amino_map(self.pred, self.header_pred.orig, self.header_pred.cell, path=path, overwrite=True)
+        save_map(self.pred, self.header_pred.orig, self.header_pred.cell, path=path)
 
     def save_diff(self, path=None):
         if self.diff is None:
