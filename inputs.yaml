@@ -1,6 +1,6 @@
 epochs        : 2           # number of epochs
 mbs           : 5           # mini batch size 
-no_of_batches : 0           # number of batches, use 0 for all
+batch_size    : 2           # number of maps to load at a time
 device        : "cuda:0"    # device 'cpu' or 'cuda:0'
 lr            : 0.001       # learning rate
 tail          : ''          # tail to add to your output filename
@@ -8,7 +8,7 @@ loss_index    : 0           # loss funct. 0 for mse 4 for mse^2
 cshape        : 64          # size of tiles
 margin        : 8           # margin
 norm          : True        # normalise maps between 0 to 1?
-norm_vox      : 0.7         # voxel size
+norm_vox      : None         # voxel size
 norm_vox_min  : 0           # voxel size limit minimum
 norm_vox_max  : 10          # voxel size limit maximum
 validate      : False       # Set validate True or False
