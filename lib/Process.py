@@ -92,7 +92,7 @@ class Process:
         print(f"type of sample.pred: {type(sample.pred)}")
         print(f"pred min: {np.min(sample.pred)}")
         print(f"pred max: {np.max(sample.pred)}")
-        sample.recompose()
+        sample.recompose(map=True)
         print(f"type of sample.pred: {type(sample.pred)}")
         sample.map = sample.pred
         print(f"min: {np.min(sample.map)}")
@@ -103,7 +103,7 @@ class Process:
         if 'denoised' not in os.listdir(path):
             os.mkdir(os.path.join(path,'denoised'))
 
-        sample.save_pred(os.path.join(path,'denoised',
+        sample.save_map(map_rec=True, path=os.path.join(path,'denoised',
             f"e_{self.proc_epoch}_{self.proc_map_name}"))
         print(f"Saved map to: out/{self.proc_model}/denoised/e_{self.proc_epoch}_{self.proc_map_name}")
 
