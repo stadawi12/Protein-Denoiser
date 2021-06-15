@@ -228,6 +228,13 @@ class Maps:
 if __name__ == '__main__':
     m1 = Maps('../../data/1.0/')
     m2 = Maps('../../data/2.0/')
+    m1.del_rest()
+    m2.del_rest()
+    m2.set_random()
+    m1.mkdirs(6)
+    m2.mkdirs(6)
+    m1.sort()
+    m2.sort()
     print(m1.maps == m2.maps)
     print(len(m1.maps))
     print(len(m2.maps))

@@ -10,3 +10,4 @@ dependencies:
  - pandas
  - bs4
  - scipy
+ - pyyaml
