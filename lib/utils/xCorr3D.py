@@ -27,6 +27,8 @@ def read_mapfile(map_path):
 
 if __name__ == '__main__':
 
+    #TODO make this into a function
+
     m1 = Maps('../../data/1.0/')
     m2 = Maps('../../data/2.0/')
 
