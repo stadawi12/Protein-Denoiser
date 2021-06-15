@@ -149,10 +149,20 @@ class dataset(Dataset):
                 contents.remove(name)
         return contents
 
+def collate_fn(tiles):
+    batch_size = len(tiles)
+    inpt_tiles = torch.cat([tiles[i][0] 
+                    for i in range(batch_size)],0)
+    trgt_tiles = torch.cat([tiles[i][1] 
+                    for i in range(batch_size)],0)
+    return inpt_tiles, trgt_tiles
+
+
 if __name__ == '__main__':
 
     data = dataset(path_global='../../data', data_set='Training')
-    data_gen = DataLoader(data, batch_size = 1, shuffle=False)
+    data_gen = DataLoader(data, batch_size = 1, shuffle=False,
+            collate_fn=collate_fn)
 
     for inpt_tiles, trgt_tiles in data_gen:
         print(inpt_tiles.shape, trgt_tiles.shape)
