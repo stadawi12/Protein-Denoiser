@@ -1,38 +1,81 @@
+import sys
+sys.path.insert(1, 'ml_toolbox/src')
+
 import torch
 from torch.utils.data import DataLoader, Dataset
 from proteins import Sample
 import os
 
 class dataset(Dataset):
+    """Class that takes care of loading data"""
+
+    def __init__(self, path_global='data', data_set="Training"):
+        """Initialising attributes
+
+        Parameters
+        ----------
+        path_global : str
+            Path pointing to the global data directory 
+            '../data' or 'data' etc.
+        data_set : str
+            Specifies whether we want to load a training or 
+            validation dataset
+        """
+
+        # Allowed data_set values 
+        data_sets = ['Training', 'Validation']
+
+        # Check if data_set specified is allowed
+        if data_set not in data_sets:
+            raise ValueError("Invalid data_set. Expected one " + \
+                "of : %s" % data_sets)
+
+        # Check if path_global exists
+        if not os.path.exists(path_global):
+            raise NotADirectoryError("Directory does not exist")
 
 
+        # Specifying attributes
+        self.path_global = path_global
+        self.data_set    = data_set
 
-    def __init__(self, res, path):
-        self.res = res
-        self.path = path
-        self.maps = os.listdir(self.PATH)
-        for name in self.maps:
-            if name[-3:] != 'map':
-                self.maps.remove(name)
+        # Specifying correct directories depending on data_set
+        if self.data_set == 'Training':
+            self.inpt_tail = '1.0'
+            self.trgt_tail = '2.0'
+        else:
+            self.inpt_tail = '1.5'
+            self.trgt_tail = '2.5'
 
-    def __len__(self):
-        return len(self.maps)
+        # Constructing full path to datasets
+        self.inpt_path = os.path.join(path_global, self.inpt_tail)
+        self.trgt_path = os.path.join(path_global, self.trgt_tail)
 
-    def __getitem__(self, i):
-        map_path = os.path.join(self.path, self.maps[i])
-        s1 = Sample(self.res, map_path)
-        s1.decompose()
-        tiles = s1.tiles
-        tiles = [torch.from_numpy(t) for t in tiles]
-        tiles = [t.unsqueeze(0).unsqueeze(0) for t in tiles]
-        tiles = torch.cat(tiles, 0)
-        return tiles
+        # Get contents of input and target directories
+        self.inpt_maps = os.listdir(self.inpt_path)
+        self.trgt_maps = os.listdir(self.trgt_path)
 
-def collate_fn(tiles):
-    tiles = torch.cat(tiles,0)
-    return tiles
+        # Filter to remove anything that isn't a .map file
+        self.inpt_maps = self.clean(self.inpt_maps)
+        self.trgt_maps = self.clean(self.trgt_maps)
+
+        # Assert input and target maps are ordered correctly
+        assert self.inpt_maps == self.trgt_maps, \
+                "Input and target maps do not match"
+
+    
+    def clean(self, contents):
+        """ Function that filters the list of maps removing 
+            anything that doesn't end with a .map extension 
+            e.g. the .gitkeep file
+        """
+        for name in contents:
+            if name[-4:] != '.map':
+                contents.remove(name)
+        return contents
+for inpt_tiles, trgt_tiles in generator:
+        print(inpt_tiles.shape , trgt_tiles.shape)
+        assert inpt_tiles.shape == trgt_tiles.shape, \
+                "WARNING: shapes do not match"
 
 
-data = dataset(1.0, '../../../../data/1.0')
-data_gen = DataLoader(data, batch_size=1, shuffle=True, 
-        collate_fn=collate_fn)
