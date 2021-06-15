@@ -5,11 +5,12 @@ import torch
 from torch.utils.data import DataLoader, Dataset
 from proteins import Sample
 import os
+from Inputs import Read_Input
 
 class dataset(Dataset):
     """Class that takes care of loading data"""
 
-    def __init__(self, path_global='data', data_set="Training"):
+    def __init__(self, input_data, path_global='data', data_set="Training"):
         """Initialising attributes
 
         Parameters
@@ -21,6 +22,13 @@ class dataset(Dataset):
             Specifies whether we want to load a training or 
             validation dataset
         """
+        # INPUT DATA
+        self.cshape = input_data["cshape"]
+        self.margin = input_data["margin"]
+        self.norm_vox = input_data["norm_vox"]
+        self.norm_vox_lim = (input_data["norm_vox_min"],
+                             input_data["norm_vox_max"])
+        self.norm = input_data["norm"]
 
         # Allowed data_set values 
         data_sets = ['Training', 'Validation']
@@ -110,14 +118,26 @@ class dataset(Dataset):
         # Use Sample class from ml_toolbox (Jola's toolbox)
         # to deal with any processing of maps (loading,
         # tiling, saving etc.) 
-        inpt_sample = Sample(float(self.inpt_tail),
-                             inpt_path)
-        trgt_sample = Sample(float(self.trgt_tail),
-                             trgt_path)
+        inpt_sample = Sample(
+                float(self.inpt_tail), inpt_path)
+        
+        trgt_sample = Sample(
+                float(self.trgt_tail), trgt_path)
 
         # Use the decompose function to tile our maps
-        inpt_sample.decompose()
-        trgt_sample.decompose()
+        inpt_sample.decompose(
+                cshape=self.cshape,
+                margin=self.margin,
+                norm=self.norm,
+                norm_vox=self.norm_vox,
+                norm_vox_lim=self.norm_vox_lim)
+
+        trgt_sample.decompose(
+                cshape=self.cshape,
+                margin=self.margin,
+                norm=self.norm,
+                norm_vox=self.norm_vox,
+                norm_vox_lim=self.norm_vox_lim)
 
         # Extract input tiles and transform from list of numpy 
         # arrays to a single torch tensor with shape
@@ -160,8 +180,10 @@ def collate_fn(tiles):
 
 if __name__ == '__main__':
 
-    data = dataset(path_global='../../data', data_set='Training')
-    data_loader = DataLoader(data, batch_size = 2, shuffle=False,
+    input_data = Read_Input('../../inputs.yaml')
+    data = dataset(input_data, 
+            path_global='../../data', data_set='Training')
+    data_loader = DataLoader(data, batch_size = 1, shuffle=False,
             collate_fn=collate_fn)
 
     for inpt_tiles, trgt_tiles in data_loader:
