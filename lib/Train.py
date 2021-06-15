@@ -9,6 +9,7 @@ import torch
 import yaml
 import time
 import os
+import math
 
 # Custome module imports
 import utils.utils_train as ut
@@ -107,6 +108,7 @@ def Train(Network, input_data, data_path='data', out_path='out'):
         #=================================================
         # TRAINING ---------------------------------------
         #=================================================
+        b_count = 0 
         for inpt_tiles, trgt_tiles in training_gen:
             
             # Ensure input and target shapes are same
@@ -140,14 +142,18 @@ def Train(Network, input_data, data_path='data', out_path='out'):
                 # Print loss
                 print(
                     f'epoch: {e+1}/{epochs}, ' +
-                    f'batch: {b+1}/{no_of_batches}, ' +
-                    f'tiles: {i}/{len(input_maps.tiles)}, ' + 
+                    f'batch: {b_count+1}/' +
+                f'{math.ceil(len(training_set)/batch_size)}, ' +
+                    f'tiles: {i}/{inpt_tiles.shape}, ' + 
                     f'loss: {loss:.6}, '
                     )
 
                 # Backward propagation
                 loss.backward()
                 optimiser.step()
+
+            b_count += 1
+
 
         # ==================================================
         # VALIDATION----------------------------------------
