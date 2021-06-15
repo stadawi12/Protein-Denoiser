@@ -79,7 +79,64 @@ class dataset(Dataset):
         return number_of_examples
 
     def __getitem__(self, i):
-        pass
+        """Function required for DataLoader, specifies the 
+        behaviour of indexing an object of our dataset class.
+        For example, if x = dataset(foo,bar), x[i] would 
+        load the i'th input and target maps into memory and
+        return their tiles
+        
+        Parameter
+        ---------
+        i : int
+            index corresponding to the i'th input/target 
+            examples
+
+        Returns
+        -------
+        inpt_tiles : torch.Tensor
+            Tiles that will serve as input for the neural
+            network
+        trgt_tiles : torch.Tensor
+            Tiles that will not be processed by the network
+            but will be used in the loss function ("labels")
+        """
+        # Path to input maps, ex. data/1.0/0552.map
+        inpt_path = os.path.join(self.inpt_path, 
+                                 self.inpt_maps[i])
+        # Path to target maps, ex. data/2.0/0552.map
+        trgt_path = os.path.join(self.trgt_path, 
+                                 self.trgt_maps[i])
+
+        # Use Sample class from ml_toolbox (Jola's toolbox)
+        # to deal with any processing of maps (loading,
+        # tiling, saving etc.) 
+        inpt_sample = Sample(float(self.inpt_tail),
+                             inpt_path)
+        trgt_sample = Sample(float(self.trgt_tail),
+                             trgt_path)
+
+        # Use the decompose function to tile our maps
+        inpt_sample.decompose()
+        trgt_sample.decompose()
+
+        # Extract input tiles and transform from list of numpy 
+        # arrays to a single torch tensor with shape
+        # [no_of_tiles,1,64,64,64]
+        inpt_tiles = inpt_sample.tiles
+        inpt_tiles = [torch.tensor(t) for t in inpt_tiles]
+        inpt_tiles = [t.unsqueeze(0).unsqueeze(0) \
+                             for t in inpt_tiles]
+        inpt_tiles = torch.cat(inpt_tiles, 0)
+
+        # Same as above but for target tiles
+        trgt_tiles = trgt_sample.tiles
+        trgt_tiles = [torch.tensor(t) for t in trgt_tiles]
+        trgt_tiles = [t.unsqueeze(0).unsqueeze(0) \
+                             for t in trgt_tiles]
+        trgt_tiles = torch.cat(trgt_tiles, 0)
+
+        return inpt_tiles, trgt_tiles
+    
 
     
     def clean(self, contents):
@@ -93,5 +150,13 @@ class dataset(Dataset):
         return contents
 
 if __name__ == '__main__':
-    pass
+
+    data = dataset(path_global='../../data', data_set='Training')
+    data_gen = DataLoader(data, batch_size = 1, shuffle=False)
+
+    for inpt_tiles, trgt_tiles in data_gen:
+        print(inpt_tiles.shape, trgt_tiles.shape)
+
+
+
 
