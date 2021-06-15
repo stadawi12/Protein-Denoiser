@@ -56,7 +56,7 @@ if __name__ == '__main__':
     for i in range(NO_OF_MAPS):
         print(i)
         map_id = maps[i]
-        if data[i] <= 0.80:
+        if data[i] <= 0.73:
             m1.move_to_bad(map_id)
             m2.move_to_bad(map_id)
 

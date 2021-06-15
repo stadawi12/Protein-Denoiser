@@ -62,7 +62,7 @@ def Train(Network, input_data, data_path='data', out_path='out'):
             path_global = data_path,
             data_set    = "Validation")
     # Training data generator
-    training_gen = DataLoader(
+    validation_gen = DataLoader(
             validation_set, 
             batch_size = batch_size,
             shuffle    = shuffle,
@@ -127,7 +127,6 @@ def Train(Network, input_data, data_path='data', out_path='out'):
                 # Pass input tiles through network
                 unet.zero_grad()
                 out = unet(x)
-                print(f"min,max: {torch.min(out)},{torch.max(out)}")
 
                 # Pick loss function
                 if loss_index == 0:
@@ -144,7 +143,7 @@ def Train(Network, input_data, data_path='data', out_path='out'):
                     f'epoch: {e+1}/{epochs}, ' +
                     f'batch: {b_count+1}/' +
                 f'{math.ceil(len(training_set)/batch_size)}, ' +
-                    f'tiles: {i}/{inpt_tiles.shape}, ' + 
+                    f'tiles: {i}/{inpt_tiles.shape[0]}, ' + 
                     f'loss: {loss:.6}, '
                     )
 
