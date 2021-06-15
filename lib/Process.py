@@ -26,11 +26,10 @@ class Process:
 
         # INITS
         self.Network = Network
-        self.input_data = input_data
         self.out_path = out_path
         self.data_path = data_path
         self.test_maps_path = os.path.join(data_path,
-                '1.5/1.0')
+                '1.5')
         self.available_test_maps = os.listdir(self.test_maps_path)
 
         # INPUT DATA
@@ -89,14 +88,8 @@ class Process:
         sample.pred = outs_np
         sample.map = outs_np
         sample.tiles = outs_np
-        print(f"type of sample.pred: {type(sample.pred)}")
-        print(f"pred min: {np.min(sample.pred)}")
-        print(f"pred max: {np.max(sample.pred)}")
         sample.recompose(map=True)
-        print(f"type of sample.pred: {type(sample.pred)}")
         sample.map = sample.pred
-        print(f"min: {np.min(sample.map)}")
-        print(f"max: {np.max(sample.map)}")
 
         # path to outputs
         path = self.training_outputs_path
@@ -118,16 +111,13 @@ class Process:
 
         return p
 
-
-
     def load_map(self, map_name):
 
         assert map_name in self.available_test_maps, \
         f"The map {map_name} is not stored, try one from" \
                 + f"{self.available_test_maps}"
 
-        map_path = os.path.join(self.test_maps_path,
-          map_name)
+        map_path = os.path.join(self.test_maps_path, map_name)
         sample = Sample(1, map_path) 
         sample.decompose(
                 cshape       = self.cshape,
@@ -143,78 +133,8 @@ class Process:
         return lst
 
 if __name__ == '__main__':
+
     input_data = Read_Input('../inputs.yaml')
     p1 = Process(unet, input_data, out_path='../out', 
             data_path='../data')
 
-
-
-# def Process(Network, input_data, out_path = '../out', 
-#         data_path = '../data' ):
-# 
-#     test_maps_path = os.path.join(data_path, '1.5/1.0')
-#     available_test_maps = os.listdir(test_maps_path)
-# 
-#     device = input_data["device"]
-#     proc_model = input_data["proc_model"]
-#     proc_epoch = input_data["proc_epoch"]
-# 
-#     device = torch.device(device)
-# 
-#     path = 'data/downloads/1.5/' # global path to test maps
-# 
-#     # Load all maps and store ids
-#     data = Data(path)
-#     data.load_batch(0)
-#     ids = []
-#     for Map in data.batch:
-#         map_id = Map.id
-#         ids.append(map_id)
-# 
-#     # Search for index of map to be denoised
-#     index = None
-#     for i, ID in enumerate(ids):
-#         if args.id == ID:
-#             index = i
-#     assert index != None, "No map with this ID has been found"
-# 
-#     tiles = data.batch[0].tiles
-#     tiles = list_to_torch(tiles)
-# 
-# 
-#     # Model (UNET)
-#     unet  = UNet()
-#     model = args.model
-# 
-# 
-#     # Load the trained unet model
-#     unet.load_state_dict(torch.load(f'trained_models/{model}',
-#         map_location=device))
-#     unet = unet.to(device)  # move unet to device
-# 
-#     # pass the test tiles through the trained network
-#     print("Testing model...")
-#     outs = []
-#     with torch.no_grad():
-#         """
-#             torch.no_grad ensures that we are not remembering
-#             all the gradients of each map,  this is essential
-#             for memory reasons.
-#         """
-#         for i, tile in enumerate(tiles):
-#             print(f"tile: {i}")
-#             tile = tile.to(device)
-#             out = unet(tile)
-#             outs.append(out)
-# 
-#     # convert output tiles from tensor to numpy arrays
-#     outs    = [tile.cpu() for tile in outs]
-#     outs_np = [tile.numpy() for tile in outs] # (1,1,64,64,64)
-#     outs_np = [t.squeeze()  for t in outs_np] # squeeze
-#     # assign to pred
-#     # recompose
-#     data.batch[index].pred = outs_np
-#     data.batch[index].recompose()
-#     data.batch[index].map = data.batch[index].pred
-#     data.batch[index].save_map(f'data/downloads/1.0preds/{model[:-3]}.map')
-#     print(f"Saved map to: data/downloads/1.0preds/{model[:-3]}.map")

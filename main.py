@@ -14,11 +14,9 @@ if __name__ == '__main__':
 
     args = Create_Parser()
 
-    input_data = Read_Input('inputs.yaml')
-
     if args.action == 'train':
 
-        Train(unet, input_data, 'data')
+        Train(unet)
 
     if args.action == 'test':
 

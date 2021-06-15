@@ -10,14 +10,18 @@ import yaml
 import time
 import os
 import math
+from shutil import copyfile
 
 # Custome module imports
+from Inputs import Read_Input
 import utils.utils_train as ut
 from net import unet
 from parsers import train_parser
 from loader import dataset, collate_fn
 
-def Train(Network, input_data, data_path='data', out_path='out'):
+def Train(Network, inputs_path='inputs.yaml',
+        data_path='data', out_path='out'):
+
     """Trains a noise2noise model on protein half-maps
 
     Parameters
@@ -28,6 +32,7 @@ def Train(Network, input_data, data_path='data', out_path='out'):
         A dictionary containing all necessary variables
 
     """
+    input_data = Read_Input(inputs_path)
 
     # Input data
     learning_rate = input_data["lr"]
@@ -93,6 +98,10 @@ def Train(Network, input_data, data_path='data', out_path='out'):
     dir_name = dir_name + tail
     # Generate output directory
     dir_name = ut.create_directory(out_path, dir_name)
+
+    # Copy input data into out/ directory
+    copyfile(inputs_path, os.path.join(out_path, dir_name,
+        'inputs.yaml'))
 
 
     # Bins for storing computed losses and validation losses
