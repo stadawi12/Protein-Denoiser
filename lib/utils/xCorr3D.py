@@ -27,6 +27,8 @@ def read_mapfile(map_path):
 
 if __name__ == '__main__':
 
+    #TODO make this into a function
+
     m1 = Maps('../../data/1.0/')
     m2 = Maps('../../data/2.0/')
 
@@ -56,7 +58,7 @@ if __name__ == '__main__':
     for i in range(NO_OF_MAPS):
         print(i)
         map_id = maps[i]
-        if data[i] <= 0.80:
+        if data[i] <= 0.73:
             m1.move_to_bad(map_id)
             m2.move_to_bad(map_id)
 

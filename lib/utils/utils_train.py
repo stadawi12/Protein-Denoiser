@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 def validate(test_data1, test_data2, device, unet):
     assert test_data1.shape == test_data2.shape
     
-    # batchNorm = torch.nn.BatchNorm3d(1, affine=False)
     n_tiles = test_data1.shape[0]
     losses = []
     # run validation
@@ -18,7 +17,6 @@ def validate(test_data1, test_data2, device, unet):
             test_batch1 = test_data1[j:j+3,0:1,:,:,:]
             test_batch1 = test_batch1.to(device)
             test_batch2 = test_data2[j:j+3,0:1,:,:,:]
-            # test_batch2 = batchNorm(test_batch2)
             test_batch2 = test_batch2.to(device)
             out = unet(test_batch1)
             loss_val = F.mse_loss(out, test_batch2)

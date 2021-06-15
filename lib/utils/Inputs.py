@@ -10,12 +10,13 @@ def Read_Input(input_path : str):
 
 def Create_Parser():
 
-    MSG_ACTION = "Select an action to perform on the network"
+    MSG_ACTION = "Select an action to perform"
 
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-a', '--action', type = str,
-            choices = ['train', 'test', 'proc'],
+            choices = ['train', 'test', 'proc', 'sortback'
+                , 'download', 'xcorr'],
             help = MSG_ACTION)
 
     return parser.parse_args()

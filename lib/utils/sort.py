@@ -6,6 +6,14 @@ class Maps:
     rnd = None
 
     def __init__(self, path_global):
+        """Function that deals with sorting data
+        Parameters
+        ----------
+        path_global : str
+            path to directory containing maps e.g. data/1.0
+
+        """
+
         assert path_global[-1] == '/'
         self.path_global = path_global
         self.ls = os.listdir(path_global)
