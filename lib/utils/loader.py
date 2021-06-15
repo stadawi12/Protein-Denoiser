@@ -161,10 +161,12 @@ def collate_fn(tiles):
 if __name__ == '__main__':
 
     data = dataset(path_global='../../data', data_set='Training')
-    data_gen = DataLoader(data, batch_size = 1, shuffle=False,
+    data_loader = DataLoader(data, batch_size = 2, shuffle=False,
             collate_fn=collate_fn)
 
-    for inpt_tiles, trgt_tiles in data_gen:
+    for inpt_tiles, trgt_tiles in data_loader:
+        assert inpt_tiles.shape == trgt_tiles.shape, \
+            "WARNING: Shapes do NOT match"
         print(inpt_tiles.shape, trgt_tiles.shape)
 
 
