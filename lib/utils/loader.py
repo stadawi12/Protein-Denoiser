@@ -63,6 +63,24 @@ class dataset(Dataset):
         assert self.inpt_maps == self.trgt_maps, \
                 "Input and target maps do not match"
 
+    def __len__(self):
+        """Function required for DataLoader specifies the
+        behaviour of Python's built-in len() function when
+        applied to an object of our dataset class
+        
+        Returns
+        -------
+        number_of_examples : int
+            number of training examples stored inside our
+            directory
+        """
+
+        number_of_examples = len(self.inpt_maps)
+        return number_of_examples
+
+    def __getitem__(self, i):
+        pass
+
     
     def clean(self, contents):
         """ Function that filters the list of maps removing 
