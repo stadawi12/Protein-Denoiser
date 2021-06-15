@@ -73,9 +73,7 @@ class dataset(Dataset):
             if name[-4:] != '.map':
                 contents.remove(name)
         return contents
-for inpt_tiles, trgt_tiles in generator:
-        print(inpt_tiles.shape , trgt_tiles.shape)
-        assert inpt_tiles.shape == trgt_tiles.shape, \
-                "WARNING: shapes do not match"
 
+if __name__ == '__main__':
+    pass
 
