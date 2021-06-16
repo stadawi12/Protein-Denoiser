@@ -23,4 +23,7 @@ if __name__ == '__main__':
     m2.move_all_from_bad()
 
     xcorr_sort('data', threshold)
+    m1 = Maps('data/1.0/')
     print("All maps below threshold have been moved to badMaps")
+    print("Number of training examples left: {}".
+            format(len(m1.maps)))
