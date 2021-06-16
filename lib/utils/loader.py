@@ -181,17 +181,23 @@ def collate_fn(tiles):
 
 
 if __name__ == '__main__':
+    import time
 
     input_data = Read_Input('../../inputs.yaml')
     data = dataset(input_data, 
             path_global='../../data', data_set='Training')
     data_loader = DataLoader(data, batch_size = 1, shuffle=False,
-            collate_fn=collate_fn)
+            collate_fn=collate_fn, num_workers=2)
+
+    tic = time.perf_counter()
 
     for inpt_tiles, trgt_tiles in data_loader:
         assert inpt_tiles.shape == trgt_tiles.shape, \
             "WARNING: Shapes do NOT match"
         print(inpt_tiles.shape, trgt_tiles.shape)
+
+    toc = time.perf_counter()
+    print(f"time: {(toc-tic) / 60}m")
 
 
 
