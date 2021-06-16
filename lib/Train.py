@@ -58,7 +58,7 @@ def Train(Network, inputs_path='inputs.yaml',
             training_set, 
             batch_size  = batch_size,
             shuffle     = shuffle,
-            collate_fn  = collate_fn
+            collate_fn  = collate_fn,
             num_workers = num_workers)
 
     #==============================================
@@ -73,7 +73,7 @@ def Train(Network, inputs_path='inputs.yaml',
             validation_set, 
             batch_size  = batch_size,
             shuffle     = shuffle,
-            collate_fn  = collate_fn
+            collate_fn  = collate_fn,
             num_workers = num_workers)
     #===============================================
 
