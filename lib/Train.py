@@ -36,6 +36,7 @@ def Train(Network, inputs_path='inputs.yaml',
 
     # Input data
     learning_rate = input_data["lr"]
+    num_workers   = input_data["num_workers"]
     loss_index    = input_data["loss_index"]
     batch_size    = input_data["batch_size"]
     validate      = input_data["validate"]
@@ -55,9 +56,10 @@ def Train(Network, inputs_path='inputs.yaml',
     # Training data generator
     training_gen = DataLoader(
             training_set, 
-            batch_size = batch_size,
-            shuffle    = shuffle,
-            collate_fn = collate_fn)
+            batch_size  = batch_size,
+            shuffle     = shuffle,
+            collate_fn  = collate_fn
+            num_workers = num_workers)
 
     #==============================================
     # VALIDATIONA DATA ----------------------------
@@ -69,9 +71,10 @@ def Train(Network, inputs_path='inputs.yaml',
     # Training data generator
     validation_gen = DataLoader(
             validation_set, 
-            batch_size = batch_size,
-            shuffle    = shuffle,
-            collate_fn = collate_fn)
+            batch_size  = batch_size,
+            shuffle     = shuffle,
+            collate_fn  = collate_fn
+            num_workers = num_workers)
     #===============================================
 
     # Model (UNET)
