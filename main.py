@@ -9,6 +9,7 @@ from Process import Process
 from Inputs import Read_Input, Create_Parser
 import unet
 from sort import Maps
+from download_data import 
 
 
 if __name__ == '__main__':
@@ -36,18 +37,6 @@ if __name__ == '__main__':
         m2.move_all_from_bad()
         print("All maps have been moved out of badMaps")
         
-
-    if args.action == 'xcorr':
-        from xCorr3D import xcorr_sort
-        """This should automatically send all data below 
-        cross correlation threshold to bad maps.
-        Remember to use ccpem-python for this command
-        """
-        input_data = Read_Input('inputs.yaml')
-        threshold = input_data["threshold"]
-
-        xcorr_sort('data', threshold)
-
 
     if args.action == 'download':
         """This function should download maps into the directories
