@@ -60,8 +60,8 @@ class dataset(Dataset):
         self.trgt_path = os.path.join(path_global, self.trgt_tail)
 
         # Get contents of input and target directories
-        self.inpt_maps = os.listdir(self.inpt_path)
-        self.trgt_maps = os.listdir(self.trgt_path)
+        self.inpt_maps = os.listdir(self.inpt_path).sort()
+        self.trgt_maps = os.listdir(self.trgt_path).sort()
 
         # Filter to remove anything that isn't a .map file
         self.inpt_maps = self.clean(self.inpt_maps)

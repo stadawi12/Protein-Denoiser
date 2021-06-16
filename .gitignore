@@ -40,3 +40,6 @@ lib/net/__pycache__
 # Ignore job scripts from SCARF
 job*
 jobout/
+
+# Ignore inputs file changes
+inputs.yaml
