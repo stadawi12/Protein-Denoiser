@@ -36,3 +36,7 @@ lib/preprocess/__pycache__
 lib/net/__pycache__
 *.pyc
 *.pyo
+
+# Ignore job scripts from SCARF
+job*
+jobout/
