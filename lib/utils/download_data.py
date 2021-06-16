@@ -16,34 +16,37 @@ import os
     parameters can be altered.
 """
 
-# Load csv file with all half-maps data
-filepath = 'halfMaps.csv'
-data     = pd.read_csv(filepath)
-df       = pd.DataFrame(data)
+def get_names(input_data, csv_path):
+    # Load csv file with all half-maps data
+    filepath = csv_path
+    data     = pd.read_csv(filepath)
+    df       = pd.DataFrame(data)
 
-# specify filter parameters
-min_dim = 0
-max_dim = 120
-min_res = 3
-max_res = 4
+    # specify filter parameters
+    min_dim = input_data["min_dim"]
+    max_dim = input_data["max_dim"]
+    min_res = input_data["min_res"]
+    max_res = input_data["max_res"]
 
-# filter the csv file for the wanted entries
-df_fltrd = get_entries(df, min_dim, max_dim, min_res, max_res)
+    # filter the csv file for the wanted entries
+    df_fltrd = get_entries(df, min_dim, max_dim, min_res, max_res)
 
-# Estimate size of download
-sizes      = df_fltrd[" Size"].tolist()
-size_total = sum(sizes) / (1024 ** 2)
-print("Total download size = {:.2f} MB".format(size_total))
+    # Estimate size of download
+    sizes      = df_fltrd[" Size"].tolist()
+    size_total = sum(sizes) / (1024 ** 2)
+    print("Total download size = {:.2f} MB".format(size_total))
 
-entries = df_fltrd["Entry"].tolist()
-tails   = df_fltrd[" Tail"].tolist()
+    entries = df_fltrd["Entry"].tolist()
+    tails   = df_fltrd[" Tail"].tolist()
+
+    return entries, tails
 
 def file_write(data):
     file.write(data)
     global pbar
     pbar += len(data)
 
-def download(entry, tail, path=None):
+def download(entry, tail, global_path='data', path=None):
     """
         This function downloads the half map specified
         by the inputs entry and tail. For example
@@ -70,11 +73,8 @@ def download(entry, tail, path=None):
     name_dwnld = id_dwnld + '.map.gz'
     name_bare  = id_dwnld + '.map'
 
-    # path to global directory
-    global_path = '../../data/'
-
     # path to half_map_x (x = 1 or 2)
-    local_path = global_path + half_map_x + '.0/'
+    local_path = os.path.join(global_path, half_map_x + '.0')
     if path != None:
         local_path = path
 
@@ -97,7 +97,7 @@ def download(entry, tail, path=None):
         # enter specific directory where half-maps can be found
         ftp.cwd(entry+'/other/')
 
-        file_path = local_path + name_dwnld
+        file_path = os.path.join(local_path, name_dwnld)
         global file
         file = open(file_path, 'wb')
         size = ftp.size(tail)

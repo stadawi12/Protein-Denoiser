@@ -196,6 +196,7 @@ def Train(Network, inputs_path='inputs.yaml',
 
             # Calculate average of valLosses
             valLosses = sum(valLosses) / len(valLosses)
+            validationLosses.append(valLosses)
 
         # OBTAIN AVERAGE OF TRAINING LOSS FOR THE EPOCH
         sum_of_trainingLosses = sum(trainingLoss)

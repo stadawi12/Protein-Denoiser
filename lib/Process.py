@@ -76,7 +76,6 @@ class Process:
                 print(f"tile: {i}")
                 tile = tile.to(self.device)
                 out = unet(tile)
-                print(f"min,max: {torch.min(out)},{torch.max(out)}")
                 outs.append(out)
         
         # convert output tiles from tensor to numpy arrays

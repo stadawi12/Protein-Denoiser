@@ -57,7 +57,7 @@ def xcorr_sort(data_path, threshold):
     for i in range(NO_OF_MAPS):
         map_id = maps[i]
         if xcorr_data[i] <= threshold:
-            print "{} moved to badMaps".format(map_id)
+            print "Moved {} to badMaps".format(map_id)
             m1.move_to_bad(map_id)
             m2.move_to_bad(map_id)
 
