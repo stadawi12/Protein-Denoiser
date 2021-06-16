@@ -3,6 +3,7 @@ from TEMPy.ScoringFunctions import ScoringFunctions
 from TEMPy.EMMap import Map
 from TEMPy.mapprocess import Filter
 from sort import Maps
+import os
 
 mrcfile_import=True
 
@@ -25,12 +26,10 @@ def read_mapfile(map_path):
         emmap.fix_origin()
     return emmap
 
-if __name__ == '__main__':
+def xcorr_sort(data_path, threshold):
 
-    #TODO make this into a function
-
-    m1 = Maps('../../data/1.0/')
-    m2 = Maps('../../data/2.0/')
+    m1 = Maps(os.path.join(data_path,'1.0/'))
+    m2 = Maps(os.path.join(data_path,'2.0/'))
 
     m1.paths = [m1.path_global + m for m in m1.maps]
 
@@ -41,7 +40,7 @@ if __name__ == '__main__':
     sc = ScoringFunctions()
     NO_OF_MAPS = len(m1.maps)
 
-    data = []
+    xcorr_data = []
     ids = []
 
     for i in range(NO_OF_MAPS):
@@ -52,15 +51,22 @@ if __name__ == '__main__':
         ccc,overlap = sc.CCC_map(emmap1,emmap2)
         print "map id: {}, ccc: {}, overlap: {}".format(
                 map_id,ccc,overlap)
-        data.append(ccc)
+        xcorr_data.append(ccc)
         ids.append(map_id)
 
     for i in range(NO_OF_MAPS):
-        print(i)
         map_id = maps[i]
-        if data[i] <= 0.73:
+        if xcorr_data[i] <= threshold:
+            print "Moved {} to badMaps".format(map_id)
             m1.move_to_bad(map_id)
             m2.move_to_bad(map_id)
+
+
+if __name__ == '__main__':
+
+    xcorr_sort('../../data', 0.8)
+
+
 
 
 

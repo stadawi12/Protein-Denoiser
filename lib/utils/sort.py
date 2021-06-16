@@ -191,7 +191,7 @@ class Maps:
         self.get_contents()
 
     def move_to_bad(self, map_id):
-        path_map = self.path_global + map_id
+        path_map = os.path.join(self.path_global, map_id)
         path_bad = self.path_global[:-1] + 'badMaps/' + map_id
         os.rename(path_map, path_bad)
         self.ls = os.listdir(self.path_global)

@@ -1,7 +1,7 @@
 import yaml
 import argparse
 
-def Read_Input(input_path : str):
+def Read_Input(input_path):
 
     with open(input_path, 'r') as input_file:
         input_data = yaml.load(input_file, Loader=yaml.FullLoader)
@@ -15,7 +15,7 @@ def Create_Parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-a', '--action', type = str,
-            choices = ['train', 'test', 'proc', 'sortback'
+            choices = ['train', 'test', 'proc', 'moveback'
                 , 'download', 'xcorr'],
             help = MSG_ACTION)
 
