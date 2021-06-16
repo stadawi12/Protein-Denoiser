@@ -15,7 +15,7 @@ def Create_Parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-a', '--action', type = str,
-            choices = ['train', 'test', 'proc', 'sortback'
+            choices = ['train', 'test', 'proc', 'moveback'
                 , 'download', 'xcorr'],
             help = MSG_ACTION)
 
