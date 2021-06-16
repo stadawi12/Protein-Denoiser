@@ -41,5 +41,5 @@ lib/net/__pycache__
 job*
 jobout/
 
-# Ignore inputs file changes
+# Ignore input file changes
 inputs.yaml
