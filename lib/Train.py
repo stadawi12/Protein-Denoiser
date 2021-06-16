@@ -61,6 +61,12 @@ def Train(Network, inputs_path='inputs.yaml',
             collate_fn  = collate_fn,
             num_workers = num_workers)
 
+    print("Testing if all training map pairs are equal shape")
+    for inpt_tiles, trgt_tiles in training_gen:
+        assert inpt_tiles.shape == trgt_tiles.shape, \
+                "Map shapes do not match"
+    print("Training set passed test")
+
     #==============================================
     # VALIDATIONA DATA ----------------------------
     #==============================================
@@ -75,6 +81,12 @@ def Train(Network, inputs_path='inputs.yaml',
             shuffle     = shuffle,
             collate_fn  = collate_fn,
             num_workers = num_workers)
+
+    print("Testing if all validation map pairs are equal shape")
+    for inpt_tiles, trgt_tiles in validation_gen:
+        assert inpt_tiles.shape == trgt_tiles.shape, \
+                "Map shapes do not match"
+    print("Validation set passed test")
     #===============================================
 
     # Model (UNET)

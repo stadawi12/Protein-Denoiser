@@ -59,13 +59,3 @@ if __name__ == '__main__':
             # Download maps
             for i in range(len(entries)):
                 dd.download(entries[i], tails[i])
-
-
-
-        print("Sorry, come back when this has been developed!")
-
-
-
-
-
-
