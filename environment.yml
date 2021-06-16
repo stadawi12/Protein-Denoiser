@@ -11,3 +11,5 @@ dependencies:
  - bs4
  - scipy
  - pyyaml
+ccpem-python dependencies:
+ - pyyaml # can be install via ccpem-python -m pip pyyaml
