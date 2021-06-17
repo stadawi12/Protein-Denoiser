@@ -33,6 +33,7 @@ def Train(Network, inputs_path='inputs.yaml',
 
     """
     input_data = Read_Input(inputs_path)
+    print(input_data)
 
     # Input data
     learning_rate = input_data["lr"]
@@ -63,6 +64,7 @@ def Train(Network, inputs_path='inputs.yaml',
 
     print("Testing if all training map pairs are equal shape")
     for inpt_tiles, trgt_tiles in training_gen:
+        print(inpt_tiles.shape, trgt_tiles.shape)
         assert inpt_tiles.shape == trgt_tiles.shape, \
                 "Map shapes do not match"
     print("Training set passed test")
