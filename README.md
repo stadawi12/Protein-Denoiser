@@ -69,17 +69,34 @@ The necessary packages can be found in the
 `environment.txt` file in the main directory.
 
 Next you should familiarise yourself with the layout of the
-directories. The main directory stores the module for 
-training, called *train_model.py* To train our model
-we need to firstly download some maps.
-This can be done using the module in the *utils/*
-directory called *file_downloader.py*. Inside of that
-you can specify the criteria for the maps you want to 
-download, you can choose by min_resolution, max_resolution
-of maps and min and max dimensions of maps. The module
-only downloads maps that are perfect squares (i.e. 
-maps whose dimensions are e.g. 128x128x128.) where
-*x_dim = y_dim = z_dim*.
+directorires and purpose of each module.
+
+## `main.py`
+This module controls most actions that you would like to
+perform; download data, train on data, denoise a map using
+a trained model and some other actions that we will get in to
+a bit more detail. Firstly, this module takes in one argument,
+that is the action you would like to perform. The flag for
+this argument is `-a` or `--action` and the allowed choices
+are: `['train', 'proc', 'moveback', 'download']`.
+
+Before running any of these actions you want to take a look 
+at the `inputs.yaml` file. It should contain all the inputs
+and required parameters for each action. Take a look at the 
+type of parameters you can manipulate.
+
+### `python main.py -a train`
+This command should run
+
+
+through the 
+terminal, actions such as train, proc etc.. There is also
+the `inputs.yaml` file, this file takes care of any 
+parameters and hyper-parameters for training and other actions.
+See what sort of parameters it controls.
+
+There are multiple directories in the root directory let's talk
+about them one by one
 
 After specifying your search criteria you can run the 
 module using
