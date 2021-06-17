@@ -69,7 +69,7 @@ The necessary packages can be found in the
 `environment.txt` file in the main directory.
 
 Next you should familiarise yourself with the layout of the
-directorires and purpose of each module.
+directories and purpose of each module.
 
 ## `main.py`
 This module controls most actions that you would like to
@@ -86,7 +86,32 @@ and required parameters for each action. Take a look at the
 type of parameters you can manipulate.
 
 ### `python main.py -a train`
-This command should run
+This command should train a model based on the parameters
+specified in the `inputs.yaml` file. The training will find
+maps stored in the `data/` directory. We will get into the 
+structure of the `data/` directory later on. 
+
+The training module can be found in `lib/Train.py` this is
+the backend of the training action. Any training outputs such
+as the trained model, plots and other model related outputs
+will go to the `out/` directory.
+
+Everytime a train action is performed successfully, first a 
+directory will be created in the `out/` directory, it will
+be named according to the parameters specified in the
+`inputs.yaml` file and the number of training examples used.
+For example, if we have ten training examples, we plan to run
+the training for ten epochs and we choose a mini-batch-size of 
+three a directory `out/m10_e10_mbs3/` would be created. The 
+next thing on the pipeline is to copy the `inputs.yaml` file
+into that directory so that we know what parameters we have set
+before the training began, this makes it easier to later look
+back at our training outputs and determine the parameters used
+for that training session, this is important when you will run 
+many different training sessions.
+Once the training has completed one epoch, inside the 
+`out/m10_e10_mbs3/` directory it will create two other 
+directories, `models` and `plots`
 
 
 through the 
