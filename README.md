@@ -66,7 +66,7 @@ to find the best way of preserving the high-frequency signal.
 First thing when you download the code is to ensure
 that you have all the necessary python packages installed.
 The necessary packages can be found in the 
-*requirements.txt* file in the main directory.
+`environment.txt` file in the main directory.
 
 Next you should familiarise yourself with the layout of the
 directories. The main directory stores the module for 
