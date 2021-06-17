@@ -115,7 +115,7 @@ def Train(Network, inputs_path='inputs.yaml',
     dir_name = dir_name + tail
     # Generate output directory
     dir_name = ut.create_directory(out_path, dir_name)
-    print(f"directory name: {dir_names}")
+    print(f"directory name: {dir_name}")
 
     # Copy input data into out/ directory
     copyfile(inputs_path, os.path.join(out_path, dir_name,
