@@ -45,6 +45,7 @@ def Train(Network, inputs_path='inputs.yaml',
     shuffle       = input_data["shuffle"]
     device        = torch.device(input_data["device"])
     epochs        = input_data["epochs"]
+    gamma         = input_data["gamma"]
     tail          = input_data["tail"]
     mbs           = input_data["mbs"] # Mini batch size
 
@@ -99,6 +100,10 @@ def Train(Network, inputs_path='inputs.yaml',
     # Optimiser
     optimiser = optim.Adam(unet.parameters(), 
             lr=learning_rate, weight_decay=weight_decay)
+
+    # Learning rate scheduler
+    scheduler = optim.lr_scheduler.ExponentialLR(
+            optimiser, gamma)
 
     # start timer
     tic = time.perf_counter()
@@ -234,6 +239,9 @@ def Train(Network, inputs_path='inputs.yaml',
                      "trainingLosses"  : trainingLosses}
         # save plot in ../out/plots/
         ut.save_plot(out_path, dir_name, plot_data, e)
+        
+        # update learning rate
+        scheduler.stet()
 
 
     # end timer
