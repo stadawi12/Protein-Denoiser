@@ -40,3 +40,7 @@ lib/net/__pycache__
 # Ignore job scripts from SCARF
 job*
 jobout/
+
+# Ignore maps and pdbs in synthetic_data
+synthetic_data/maps/
+synthetic_data/pdbs/
