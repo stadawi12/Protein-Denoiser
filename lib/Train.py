@@ -37,6 +37,7 @@ def Train(Network, inputs_path='inputs.yaml',
 
     # Input data
     learning_rate = input_data["lr"]
+    weight_decay  = input_data["weight_decay"]
     num_workers   = input_data["num_workers"]
     loss_index    = input_data["loss_index"]
     batch_size    = input_data["batch_size"]
@@ -97,7 +98,7 @@ def Train(Network, inputs_path='inputs.yaml',
 
     # Optimiser
     optimiser = optim.Adam(unet.parameters(), 
-            lr=learning_rate)
+            lr=learning_rate, weight_decay=weight_decay)
 
     # start timer
     tic = time.perf_counter()
