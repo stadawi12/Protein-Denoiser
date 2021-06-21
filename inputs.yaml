@@ -2,9 +2,9 @@
 cshape        : 64          # size of tiles
 margin        : 8           # margin
 norm          : True        # normalise maps between 0 to 1?
-norm_vox      : 1.0        # voxel size
-norm_vox_min  : 1.0           # voxel size limit minimum
-norm_vox_max  : 1.0          # voxel size limit maximum
+norm_vox      : None        # voxel size
+norm_vox_min  : 0         # voxel size limit minimum
+norm_vox_max  : 10          # voxel size limit maximum
 validate      : True        # Set validate True or False
 shuffle       : True        # Shuffle data after each epoch
 num_workers   : 2           # number of workers for DataLoader
@@ -14,11 +14,11 @@ mbs           : 5           # mini batch size
 batch_size    : 1           # number of maps to load at a time
 device        : "cuda:0"    # device 'cpu' or 'cuda:0'
 lr            : 0.001       # learning rate
-tail          : '_normVox'  # add tail to output filename
-loss_index    : 0           # loss funct. 0 for mse 4 for mse^2
+tail          : '_SGDfree'  # add tail to output filename
+loss_index    : 0       # loss funct. 0 for mse 4 for mse^2
 # DENOISING INPUTS 
-proc_model    : 'm4_e1_mbs5' # denoise model
-proc_epoch    : 1           # epoch of model for processing
+proc_model    : 'm85_e20_mbs3_SGD_1' # denoise model
+proc_epoch    : 10           # epoch of model for processing
 proc_map_name : "0552.map"  # map to be denoised
 # CROSS CORRELATION INPUTS
 threshold     : 0.80        # cross correlation threshold

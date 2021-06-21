@@ -96,7 +96,8 @@ def Train(Network, inputs_path='inputs.yaml',
     unet = unet.to(device)
 
     # Optimiser
-    optimiser = optim.Adam(unet.parameters(), lr=learning_rate)
+    optimiser = optim.Adam(unet.parameters(), 
+            lr=learning_rate)
 
     # start timer
     tic = time.perf_counter()
@@ -135,6 +136,7 @@ def Train(Network, inputs_path='inputs.yaml',
         #=================================================
         # TRAINING ---------------------------------------
         #=================================================
+        # Count for the training batch we are on
         b_count = 0 
         for inpt_tiles, trgt_tiles in training_gen:
             
