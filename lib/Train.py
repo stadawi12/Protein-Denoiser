@@ -37,6 +37,7 @@ def Train(Network, inputs_path='inputs.yaml',
 
     # Input data
     learning_rate = input_data["lr"]
+    weight_decay  = input_data["weight_decay"]
     num_workers   = input_data["num_workers"]
     loss_index    = input_data["loss_index"]
     batch_size    = input_data["batch_size"]
@@ -44,6 +45,7 @@ def Train(Network, inputs_path='inputs.yaml',
     shuffle       = input_data["shuffle"]
     device        = torch.device(input_data["device"])
     epochs        = input_data["epochs"]
+    gamma         = input_data["gamma"]
     tail          = input_data["tail"]
     mbs           = input_data["mbs"] # Mini batch size
 
@@ -96,7 +98,12 @@ def Train(Network, inputs_path='inputs.yaml',
     unet = unet.to(device)
 
     # Optimiser
-    optimiser = optim.Adam(unet.parameters(), lr=learning_rate)
+    optimiser = optim.Adam(unet.parameters(), 
+            lr=learning_rate, weight_decay=weight_decay)
+
+    # Learning rate scheduler
+    scheduler = optim.lr_scheduler.ExponentialLR(
+            optimiser, gamma)
 
     # start timer
     tic = time.perf_counter()
@@ -135,6 +142,7 @@ def Train(Network, inputs_path='inputs.yaml',
         #=================================================
         # TRAINING ---------------------------------------
         #=================================================
+        # Count for the training batch we are on
         b_count = 0 
         for inpt_tiles, trgt_tiles in training_gen:
             
@@ -231,6 +239,9 @@ def Train(Network, inputs_path='inputs.yaml',
                      "trainingLosses"  : trainingLosses}
         # save plot in ../out/plots/
         ut.save_plot(out_path, dir_name, plot_data, e)
+        
+        # update learning rate
+        scheduler.stet()
 
 
     # end timer

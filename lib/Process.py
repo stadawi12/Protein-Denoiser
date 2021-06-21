@@ -54,6 +54,8 @@ class Process:
 
         # Load tiles
         sample = self.load_map(self.proc_map_name)
+        print(sample.map.shape)
+        print(np.min(sample.map), np.max(sample.map))
         tiles = sample.tiles
         tiles = self.to_torch_list(tiles)
 
@@ -75,7 +77,11 @@ class Process:
             for i, tile in enumerate(tiles):
                 print(f"tile: {i}")
                 tile = tile.to(self.device)
+                print(f"tile: {torch.min(tile), torch.max(tile)}")
+                print(f"tile: {tile.shape}")
                 out = unet(tile)
+                print(f"out tile: {torch.min(out), torch.max(out)}")
+                print(f"out: {out.shape}")
                 outs.append(out)
         
         # convert output tiles from tensor to numpy arrays
@@ -87,7 +93,9 @@ class Process:
         sample.pred = outs_np
         sample.map = outs_np
         sample.tiles = outs_np
+        print(np.min(sample.map),np.max(sample.map))
         sample.recompose(map=True)
+        print(np.min(sample.map),np.max(sample.map))
         sample.map = sample.pred
 
         # path to outputs
@@ -118,6 +126,7 @@ class Process:
 
         map_path = os.path.join(self.test_maps_path, map_name)
         sample = Sample(1, map_path) 
+        print(sample.map.shape)
         sample.decompose(
                 cshape       = self.cshape,
                 margin       = self.margin,
