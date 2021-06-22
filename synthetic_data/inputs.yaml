@@ -1,0 +1,8 @@
+# GENERATE INPUTS
+pdb      : 'pdb6nyy.ent'   # filename of pdb     
+r        : 3.0             # resolution of pdb
+# ADD NOISE IPUTS
+res      : '3.0'           # which res inside maps directory
+filename : 'pdb6nyy.mrc'   # filename of map to add noise to
+centre   : 0               # centre of gauss noise distr.
+sigma    : 0.2             # standard deviation of noise

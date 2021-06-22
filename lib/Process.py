@@ -28,8 +28,7 @@ class Process:
         self.Network = Network
         self.out_path = out_path
         self.data_path = data_path
-        self.test_maps_path = os.path.join(data_path,
-                '1.5')
+        self.test_maps_path = data_path
         self.available_test_maps = os.listdir(self.test_maps_path)
 
         # INPUT DATA
@@ -50,10 +49,11 @@ class Process:
         self.training_outputs_path =  \
             self.get_path_to_training_outputs()
 
-    def process(self):
+    def process(self, norm=False):
 
         # Load tiles
-        sample = self.load_map(self.proc_map_name)
+        sample = self.load_map(self.proc_map_name,
+                self.norm)
         print(sample.map.shape)
         print(np.min(sample.map), np.max(sample.map))
         tiles = sample.tiles
@@ -88,15 +88,32 @@ class Process:
         outs    = [tile.cpu() for tile in outs]
         outs_np = [tile.numpy() for tile in outs] # (1,1,64,64,64)
         outs_np = [t.squeeze()  for t in outs_np] # squeeze
-        # assign to pred
+
+        if norm:
+            map_raw = self.load_map(self.proc_map_name, 
+                    False)
+            a = np.min(map_raw.map) 
+            b = np.max(map_raw.map)
+            Min = np.min(outs_np)
+            Max = np.max(outs_np)
+            print(a,b,Min,Max)
+            outs_np = (((b - a) * (outs_np - Min)) / \
+                    (Max - Min)) + a
+            print(np.min(outs_np), np.max(outs_np))
+
+        # assign to map
         # recompose
-        sample.pred = outs_np
-        sample.map = outs_np
         sample.tiles = outs_np
+        sample.map = outs_np
+        sample.pred = outs_np
+
+
+        print(type(sample.map))
         print(np.min(sample.map),np.max(sample.map))
         sample.recompose(map=True)
         print(np.min(sample.map),np.max(sample.map))
-        sample.map = sample.pred
+        print(f"type of map: {type(sample.map)}")
+
 
         # path to outputs
         path = self.training_outputs_path
@@ -118,7 +135,7 @@ class Process:
 
         return p
 
-    def load_map(self, map_name):
+    def load_map(self, map_name, norm):
 
         assert map_name in self.available_test_maps, \
         f"The map {map_name} is not stored, try one from" \
@@ -130,7 +147,7 @@ class Process:
         sample.decompose(
                 cshape       = self.cshape,
                 margin       = self.margin,
-                norm         = self.norm,
+                norm         = norm,
                 norm_vox     = self.norm_vox,
                 norm_vox_lim = self.norm_vox_lim)
         return sample
