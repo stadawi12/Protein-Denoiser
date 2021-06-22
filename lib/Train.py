@@ -241,7 +241,7 @@ def Train(Network, inputs_path='inputs.yaml',
         ut.save_plot(out_path, dir_name, plot_data, e)
         
         # update learning rate
-        scheduler.stet()
+        scheduler.step()
 
 
     # end timer
