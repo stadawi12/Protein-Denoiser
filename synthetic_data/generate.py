@@ -6,6 +6,8 @@ from Inputs import Read_Input
 
 if __name__ == '__main__':
 
+    print("Generating density map from model...")
+
     input_data = Read_Input('inputs.yaml')
 
     pdb = input_data['pdb']

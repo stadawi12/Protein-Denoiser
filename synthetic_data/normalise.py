@@ -1,34 +1,40 @@
 import sys
 sys.path.insert(1, '../lib/utils/ml_toolbox/src')
+sys.path.insert(1, '../lib/utils')
 
 from proteins import Sample
+from Inputs import Read_Input
 import numpy as np
+import os
 
-denoised = Sample(3.0, 'denoised/3.0/e_20_pdb6nyy.mrc')
-noisy = Sample(3.0, 'noisy/3.0/pdb6nyy.mrc')
-clean = Sample(3.0, 'maps/3.0/pdb6nyy.mrc')
+print("Normalising denoised map ...")
 
-a, b = np.min(clean.map), np.max(clean.map)
+input_data = Read_Input('inputs.yaml')
+
+filename = input_data["norm_fname"]
+res      = input_data["norm_res"]
+epoch    = input_data["norm_epoch"]
+
+clean_path = os.path.join('maps',res,filename)
+denoised_path = os.path.join('denoised',res,
+        f"e_{epoch}_" + filename)
+
+
+clean    = Sample(3.0, clean_path)
+denoised = Sample(3.0, denoised_path)
+
+# min max parameters of each map
+a, b         = np.min(clean.map), np.max(clean.map)
 Min_d, Max_d = np.min(denoised.map), np.max(denoised.map)
-Min_n, Max_n = np.min(noisy.map), np.max(noisy.map)
 
 denoised.map = (((b-a) * (denoised.map-Min_d)) / \
         (Max_d - Min_d)) + a
-denoised.save_map('denoised/3.0/e_20_pdb6nyy.mrc')
 
-noisy.map = (((b-a) * (noisy.map-Min_n)) / \
-        (Max_n - Min_n)) + a
-noisy.save_map('noisy/3.0/pdb6nyy.mrc')
+denoised.save_map(denoised_path)
 
-denoised = Sample(3.0, 'denoised/3.0/e_20_pdb6nyy.mrc')
-noisy = Sample(3.0, 'noisy/3.0/pdb6nyy.mrc')
+denoised = Sample(3.0, denoised_path)
 
-
-if __name__ == '__main__':
-
-    print(denoised.map.shape)
-    print(np.min(denoised.map), np.max(denoised.map))
-    print(noisy.map.shape)
-    print(np.min(noisy.map), np.max(noisy.map))
-    print(clean.map.shape)
-    print(np.min(clean.map), np.max(clean.map))
+print("denoised map min, max: ") 
+print(np.min(denoised.map), np.max(denoised.map))
+print("clean map min, max: ") 
+print(np.min(clean.map), np.max(clean.map))

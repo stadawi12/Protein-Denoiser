@@ -42,7 +42,7 @@ class Process:
         self.proc_epoch    = input_data["proc_epoch"]
         self.proc_map_name = input_data["proc_map_name"]
         self.device        = torch.device(input_data["device"])
-        if input_data["res"] != None:
+        if input_data["proc_res"] != None:
             self.res       = input_data["proc_res"]
 
         # GET PATH TO MODEL
@@ -56,8 +56,9 @@ class Process:
         # Load map and normalise it
         sample = self.load_map(self.proc_map_name,
                 self.norm)
-        print(sample.map.shape)
-        print(np.min(sample.map), np.max(sample.map))
+        print(f"Shape of map: {sample.map.shape}")
+        print("min, max of map: {}, {}".format(
+            np.min(sample.map), np.max(sample.map)))
         tiles = sample.tiles
         tiles = self.to_torch_list(tiles)
 
@@ -108,9 +109,8 @@ class Process:
         # Function to rescale tiles from [Min,Max]->[a,b]
         outs_np = (((b - a) * (outs_np - Min)) / \
                 (Max - Min)) + a
-        # Ensure Min, Max is same as the new min and max 
-        # of tiles
-        print(Min, Max)
+        # Ensure the new min and max is same as a and b
+        print(a, b)
         print(np.min(outs_np), np.max(outs_np))
 
         # With tiles rescaled, recompose tiles into a map
@@ -213,7 +213,6 @@ class Process:
 
         map_path = os.path.join(self.test_maps_path, map_name)
         sample = Sample(1, map_path) 
-        print(sample.map.shape)
         sample.decompose(
                 cshape       = self.cshape,
                 margin       = self.margin,
