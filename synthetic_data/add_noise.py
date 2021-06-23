@@ -12,7 +12,8 @@ from Inputs import Read_Input
 if __name__ == '__main__':
 
     print("Adding noise to density map...")
-
+    
+    # Read input data
     input_data = Read_Input('inputs.yaml')
 
     filename = input_data['noise_fname']
@@ -21,10 +22,13 @@ if __name__ == '__main__':
     sigma    = input_data['sigma']
     clip     = input_data['clip']
 
+    # Path to clean map generated from model
     path = os.path.join('maps', res, filename)
 
+    # Object to deal with map data
     s1 = Sample(3.0, path)
 
+    # Save shape of map to variable
     shape = s1.map.shape
     Min = np.min(s1.map)
     Max = np.max(s1.map)
@@ -47,5 +51,4 @@ if __name__ == '__main__':
 
     s1.save_map(save_path)
 
-    print("noisy maps saved to: ")
-    print(save_path)
+    print("noisy map saved to: {}".format(save_path))

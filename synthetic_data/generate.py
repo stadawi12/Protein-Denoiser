@@ -28,4 +28,4 @@ if __name__ == '__main__':
             os.path.join(p, pdb[:-4]))
         os.system(s)
     else: 
-        print("Maps has already been generated")
+        print("Map has already been generated")
