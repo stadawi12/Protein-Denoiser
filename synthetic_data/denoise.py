@@ -8,9 +8,9 @@ import unet                     # from lib/net
 from Process import Process     # from lib/
 from Inputs import Read_Input   # from lib/utils
 
-input_data = Read_Input('../inputs.yaml')
+input_data = Read_Input('inputs.yaml')
 
 p1 = Process(unet, input_data, out_path='../out',
     data_path='noisy/3.0')
 
-p1.process(norm=True)
+p1.process_synthetic()

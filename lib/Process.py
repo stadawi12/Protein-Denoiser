@@ -32,7 +32,6 @@ class Process:
         self.available_test_maps = os.listdir(self.test_maps_path)
 
         # INPUT DATA
-        self.map_name      = input_data["proc_map_name"]
         self.cshape        = input_data["cshape"]
         self.margin        = input_data["margin"]
         self.norm          = input_data["norm"]
@@ -43,13 +42,103 @@ class Process:
         self.proc_epoch    = input_data["proc_epoch"]
         self.proc_map_name = input_data["proc_map_name"]
         self.device        = torch.device(input_data["device"])
+        if input_data["res"] != None:
+            self.res       = input_data["proc_res"]
 
         # GET PATH TO MODEL
         self.models_path = self.get_path_to_models()
         self.training_outputs_path =  \
             self.get_path_to_training_outputs()
 
-    def process(self, norm=False):
+    # process function for synthetic data
+    def process_synthetic(self):
+        res = self.res
+        # Load map and normalise it
+        sample = self.load_map(self.proc_map_name,
+                self.norm)
+        print(sample.map.shape)
+        print(np.min(sample.map), np.max(sample.map))
+        tiles = sample.tiles
+        tiles = self.to_torch_list(tiles)
+
+        # Load model
+        unet = self.Network.UNet()
+        # Load the trained unet model
+        unet.load_state_dict(torch.load(self.models_path,
+            map_location=self.device))
+        unet = unet.to(self.device)  # move unet to device
+
+        print(f"Denoising {self.proc_map_name}...")
+        outs = []
+        with torch.no_grad():
+            """
+                torch.no_grad ensures that we are not 
+                remembering all the gradients of each map,
+                this is essential for memory reasons.
+            """
+            # For each tile
+            for i, tile in enumerate(tiles):
+                print(f"tile: {i}")
+                # Move tile to device cpu or gpu
+                tile = tile.to(self.device)
+                # Pass tile through network
+                out = unet(tile)
+                # Append the output file to outs
+                outs.append(out)
+        
+        # convert output tiles from tensor to numpy arrays
+        # First move them to the cpu
+        outs    = [tile.cpu() for tile in outs]
+        # Convert each tile from tensort to numpy
+        outs_np = [tile.numpy() for tile in outs] 
+        # Squeeze from (1,1,64,64,64) to (64,64,64)
+        outs_np = [t.squeeze()  for t in outs_np] # squeeze
+
+        # Normalise tiles so that they have same range as 
+        # the noisy map
+        # Load noisy map with norm = False
+        map_raw = self.load_map(self.proc_map_name, 
+                False)
+        # Range set by noisy raw map
+        a = np.min(map_raw.map) 
+        b = np.max(map_raw.map)
+        # Get minimum and maximum of current output tiles
+        Min = np.min(outs_np)
+        Max = np.max(outs_np)
+        # Function to rescale tiles from [Min,Max]->[a,b]
+        outs_np = (((b - a) * (outs_np - Min)) / \
+                (Max - Min)) + a
+        # Ensure Min, Max is same as the new min and max 
+        # of tiles
+        print(Min, Max)
+        print(np.min(outs_np), np.max(outs_np))
+
+        # With tiles rescaled, recompose tiles into a map
+        # set everything to outs_np as I do not know which
+        # one needs it for recompose() to work,
+        # only one of them does, just laziness here.
+        sample.tiles = outs_np
+        sample.map = outs_np
+        sample.pred = outs_np
+
+        # Using recompose to turn tiles into map
+        sample.recompose(map=True)
+
+        # path where to save the recomposed map
+        path = os.path.join('denoised',res,
+            f"e_{self.proc_epoch}_{self.proc_map_name}")
+            
+        # Finally save the map to the path
+        sample.save_map(map_rec=True, path=path)
+                
+        # Print statement saying where map was saved to
+        print(f"Saved map to: denoised/{self.res}/e_" +
+            f"{self.proc_epoch}_{self.proc_map_name}")
+
+
+
+    # process function for real data
+    def process(self):
 
         # Load tiles
         sample = self.load_map(self.proc_map_name,
@@ -70,59 +159,40 @@ class Process:
         outs = []
         with torch.no_grad():
             """
-                torch.no_grad ensures that we are not remembering
-                all the gradients of each map,  this is essential
-                for memory reasons.
+                torch.no_grad ensures that we are not 
+                remembering all the gradients of each map,
+                this is essential for memory reasons.
             """
             for i, tile in enumerate(tiles):
                 print(f"tile: {i}")
                 tile = tile.to(self.device)
-                print(f"tile: {torch.min(tile), torch.max(tile)}")
-                print(f"tile: {tile.shape}")
                 out = unet(tile)
-                print(f"out tile: {torch.min(out), torch.max(out)}")
-                print(f"out: {out.shape}")
                 outs.append(out)
         
         # convert output tiles from tensor to numpy arrays
         outs    = [tile.cpu() for tile in outs]
-        outs_np = [tile.numpy() for tile in outs] # (1,1,64,64,64)
+        outs_np = [tile.numpy() for tile in outs]
         outs_np = [t.squeeze()  for t in outs_np] # squeeze
 
-        if norm:
-            map_raw = self.load_map(self.proc_map_name, 
-                    False)
-            a = np.min(map_raw.map) 
-            b = np.max(map_raw.map)
-            Min = np.min(outs_np)
-            Max = np.max(outs_np)
-            print(a,b,Min,Max)
-            outs_np = (((b - a) * (outs_np - Min)) / \
-                    (Max - Min)) + a
-            print(np.min(outs_np), np.max(outs_np))
-
-        # assign to map
         # recompose
         sample.tiles = outs_np
         sample.map = outs_np
         sample.pred = outs_np
 
-
-        print(type(sample.map))
-        print(np.min(sample.map),np.max(sample.map))
         sample.recompose(map=True)
-        print(np.min(sample.map),np.max(sample.map))
-        print(f"type of map: {type(sample.map)}")
-
 
         # path to outputs
         path = self.training_outputs_path
         if 'denoised' not in os.listdir(path):
             os.mkdir(os.path.join(path,'denoised'))
 
-        sample.save_map(map_rec=True, path=os.path.join(path,'denoised',
+        sample.save_map(map_rec=True, path=os.path.join(
+            path,'denoised',
             f"e_{self.proc_epoch}_{self.proc_map_name}"))
-        print(f"Saved map to: out/{self.proc_model}/denoised/e_{self.proc_epoch}_{self.proc_map_name}")
+
+        print(f"Saved map to: out/{self.proc_model}" +
+        f"/denoised/e_{self.proc_epoch}_" +
+        f"{self.proc_map_name}")
 
 
     def get_path_to_models(self):

@@ -1,8 +1,22 @@
 # GENERATE INPUTS
-pdb      : 'pdb6nyy.ent'   # filename of pdb     
-r        : 3.0             # resolution of pdb
-# ADD NOISE IPUTS
-res      : '3.0'           # which res inside maps directory
-filename : 'pdb6nyy.mrc'   # filename of map to add noise to
-centre   : 0               # centre of gauss noise distr.
-sigma    : 0.2             # standard deviation of noise
+pdb           : 'pdb6nyy.ent' # filename of pdb     
+r             : 3.0           # resolution of pdb
+
+# ADD NOISE INPUTS
+res           : '3.0'         # which res in maps directory
+filename      : 'pdb6nyy.mrc' # name of map to add noise to
+centre        : 0             # centre of gauss noise distr.
+sigma         : 0.2           # standard deviation of noise
+
+# DENOISING INPUTS
+proc_res      : '3.0'       # what resolution to save to    
+cshape        : 64          # size of tiles
+margin        : 8           # margin
+norm          : True        # normalise maps between 0 to 1?
+norm_vox      : None        # voxel size
+norm_vox_min  : 0           # voxel size limit minimum
+norm_vox_max  : 10          # voxel size limit maximum
+proc_model    : 'm85_e20_mbs3_cc07' # denoise model
+proc_epoch    : 20          # epoch of model for processing
+proc_map_name : "pdb6nyy.mrc"  # map to be denoised
+device        : "cpu"       # device 'cpu' or 'cuda:0'
