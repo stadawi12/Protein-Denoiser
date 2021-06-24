@@ -4,13 +4,9 @@ sys.path.insert(1, '../lib/utils')
 import os
 from Inputs import Read_Input
 
-if __name__ == '__main__':
-
-    # Read inputs
-    input_data = Read_Input('inputs.yaml')
-
-    pdb = input_data['pdb']
-    r   = input_data['r']
+def generate(input_data):
+    pdb = input_data['map_name'] + '.ent'
+    r   = input_data['res']
 
     # Check if map already generated
     mrc = pdb[:-3] + 'mrc'
@@ -29,3 +25,11 @@ if __name__ == '__main__':
         os.system(s)
     else: 
         print("Map has already been generated")
+
+if __name__ == '__main__':
+
+    # Read inputs
+    input_data = Read_Input('inputs.yaml')
+
+    generate(input_data)
+
