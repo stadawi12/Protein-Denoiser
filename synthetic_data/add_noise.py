@@ -1,9 +1,9 @@
 import sys
+import os
 sys.path.insert(1, '../lib/utils/ml_toolbox/src')
 sys.path.insert(1, '../lib/utils')
 
 import numpy as np
-import os
 
 from proteins import Sample
 from Inputs import Read_Input

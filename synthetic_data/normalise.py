@@ -14,10 +14,11 @@ input_data = Read_Input('inputs.yaml')
 filename = input_data["norm_fname"]
 res      = input_data["norm_res"]
 epoch    = input_data["norm_epoch"]
+model    = input_data["norm_model"]
 
 clean_path = os.path.join('maps',res,filename)
 denoised_path = os.path.join('denoised',res,
-        f"e_{epoch}_" + filename)
+        model, f"e_{epoch}_{filename}")
 
 
 clean    = Sample(3.0, clean_path)

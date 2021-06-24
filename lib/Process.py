@@ -126,14 +126,16 @@ class Process:
 
         # path where to save the recomposed map
         path = os.path.join('denoised',res,
+            self.proc_model,
             f"e_{self.proc_epoch}_{self.proc_map_name}")
             
         # Finally save the map to the path
         sample.save_map(map_rec=True, path=path)
                 
         # Print statement saying where map was saved to
-        print(f"Saved map to: denoised/{self.res}/e_" +
-            f"{self.proc_epoch}_{self.proc_map_name}")
+        print(f"Saved map to: denoised/{self.res}/" +
+              f"{self.proc_model}/e_" +
+              f"{self.proc_epoch}_{self.proc_map_name}")
 
 
 

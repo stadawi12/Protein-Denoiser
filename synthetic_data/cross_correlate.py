@@ -6,6 +6,8 @@ from TEMPy.ScoringFunctions import ScoringFunctions
 from TEMPy.EMMap import Map
 from TEMPy.mapprocess import Filter
 import os
+import pandas as pd
+import csv
 
 from Inputs import Read_Input
 
@@ -14,6 +16,9 @@ input_data = Read_Input('inputs.yaml')
 filename = input_data["cc_fname"]
 res      = input_data["cc_res"]
 epoch    = input_data["cc_epoch"]
+model    = input_data["cc_model"]
+append   = input_data["append"]
+clip     = input_data["clip"]
 
 mrcfile_import=True
 
@@ -21,8 +26,6 @@ try:
     import mrcfile
 except ImportError:
     mrcfile_import = False
-
-print(mrcfile_import)
 
 def read_mapfile(map_path):
     if mrcfile_import:
@@ -43,6 +46,7 @@ def read_mapfile(map_path):
 clean_path = os.path.join('maps',res,filename)
 noisy_path = os.path.join('noisy',res,filename)
 denoised_path = os.path.join('denoised',res,
+        model,
         "e_{}_{}".format(epoch, filename))
 
 clean_map = read_mapfile(clean_path)
@@ -63,3 +67,18 @@ print("Denoised vs Clean: {}, {}".format(ccc_denoised,
     overlap_denoised))
 print("Clean vs Clean: {}, {}".format(ccc_clean,
     overlap_clean))
+
+if append:
+    centre = input_data["centre"]
+    sigma  = input_data["sigma"]
+    if clip:
+        clip='yes'
+    else:
+        clip='no'
+    fields = [filename,res,model,epoch,clip,centre,sigma,ccc_noisy,ccc_denoised]
+    with open(r'data.csv', 'a') as f:
+        writer = csv.writer(f)
+        writer.writerow(fields)
+    data = pd.read_csv('data.csv')
+    df = pd.DataFrame(data)
+    print(df)

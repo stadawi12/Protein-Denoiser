@@ -15,15 +15,19 @@ norm          : True        # normalise maps between 0 to 1?
 norm_vox      : None        # voxel size
 norm_vox_min  : 0           # voxel size limit minimum
 norm_vox_max  : 10          # voxel size limit maximum
-proc_model    : 'm85_e20_mbs3_cc07' # denoise model
+proc_model    : 'm93_e20_mbs3_huber01' # denoise model
 proc_epoch    : 20          # epoch of model for processing
 proc_map_name : "pdb6nyy.mrc"  # map to be denoised
 device        : "cpu"       # device 'cpu' or 'cuda:0'
+denoise_anyway: False       # Denoise even if already denoised
 # NORMALISE INPUTS
-norm_fname    : 'pdb6nyy.mrc' # map to be normalised
-norm_res      : '3.0'       # resolution, name of subdir.
-norm_epoch    : 20          # epoch of map 
+norm_fname    : 'pdb6nyy.mrc'  # map to be normalised
+norm_res      : '3.0'          # resolution, name of subdir.
+norm_epoch    : 20             # epoch of map 
+norm_model    : 'm93_e20_mbs3_huber01' # model of denoised map
 # CROSS CORRELATE INPUTS
 cc_fname      : 'pdb6nyy.mrc' # filename for cross-corr
 cc_res        : '3.0'         # resolution, name of subdir.
 cc_epoch      : 20            # epoch of map
+cc_model      : 'm93_e20_mbs3_huber01' # model of denoised map
+append        : True         # append this to data.csv?
