@@ -6,7 +6,7 @@ res           : 3.0            # resolution of map
 # ADD NOISE INPUTS
 centre        : 0             # centre of gauss noise distr.
 sigma         : 0.2           # standard deviation of noise
-clip          : False         # Clip noise? True or False
+clip          : True         # Clip noise? True or False
 seed          : 3             # random generator seed
 # DENOISING INPUTS
 cshape        : 64          # size of tiles

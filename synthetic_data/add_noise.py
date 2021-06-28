@@ -34,6 +34,7 @@ def add_noise(input_data):
     noise = np.random.normal(centre, sigma, size=shape)
 
     if clip:
+        # Clip the noise
         s1.map = np.clip(s1.map + noise, Min, Max)
     else: 
         # Add noise

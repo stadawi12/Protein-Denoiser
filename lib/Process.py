@@ -28,7 +28,7 @@ class Process:
         self.Network = Network
         self.out_path = out_path
         self.data_path = data_path
-        self.test_maps_path = data_path
+        self.test_maps_path = os.path.join(data_path, '1.5')
         self.available_test_maps = os.listdir(self.test_maps_path)
 
         # INPUT DATA
@@ -42,8 +42,6 @@ class Process:
         self.proc_epoch    = input_data["proc_epoch"]
         self.proc_map_name = input_data["proc_map_name"]
         self.device        = torch.device(input_data["device"])
-        if input_data["proc_res"] != None:
-            self.res       = input_data["proc_res"]
 
         # GET PATH TO MODEL
         self.models_path = self.get_path_to_models()
