@@ -66,199 +66,117 @@ to find the best way of preserving the high-frequency signal.
 First thing when you download the code is to ensure
 that you have all the necessary python packages installed.
 The necessary packages can be found in the 
-*requirements.txt* file in the main directory.
+`environment.txt` file in the main directory.
 
 Next you should familiarise yourself with the layout of the
-directories. The main directory stores the module for 
-training, called *train_model.py* To train our model
-we need to firstly download some maps.
-This can be done using the module in the *utils/*
-directory called *file_downloader.py*. Inside of that
-you can specify the criteria for the maps you want to 
-download, you can choose by min_resolution, max_resolution
-of maps and min and max dimensions of maps. The module
-only downloads maps that are perfect squares (i.e. 
-maps whose dimensions are e.g. 128x128x128.) where
-*x_dim = y_dim = z_dim*.
+directories and purpose of each module.
 
-After specifying your search criteria you can run the 
-module using
+## `main.py`
+This module controls most actions that you would like to
+perform; download data, train on data, denoise a map using
+a trained model and some other actions that we will get in to
+a bit more detail. Firstly, this module takes in one argument,
+that is the action you would like to perform. The flag for
+this argument is `-a` or `--action` and the allowed choices
+are: `['train', 'proc', 'moveback', 'download']`.
 
-> $ python file_downloader.py
+Before running any of these actions you want to take a look 
+at the `inputs.yaml` file. It should contain all the inputs
+and required parameters for each action. Take a look at the 
+type of parameters you can manipulate.
 
-this will output the number of maps it has found for you 
-to download but not download them yet. You will be asked
-if you want to download those maps.
+### `python main.py -a train`
+This command should train a model based on the parameters
+specified in the `inputs.yaml` file. The training will find
+maps stored in the `data/` directory. We will get into the 
+structure of the `data/` directory later on. 
 
-This module will save the maps in the 
-*data/downloads/(1.0 or 2.0)* directory depending on whether
-it is downloading a half_map_1 or half_map_2. It will sort
-them to the correct directory automatically.
+The training module can be found in `lib/Train.py` this is
+the backend of the training action. Any training outputs such
+as the trained model, plots and other model related outputs
+will go to the `out/` directory.
 
-Also, if a map already exists in the destination folder
-it will not be downloaded again.
+Everytime a train action is performed successfully, first a 
+directory will be created in the `out/` directory, it will
+be named according to the parameters specified in the
+`inputs.yaml` file and the number of training examples used.
+For example, if we have ten training examples, we plan to run
+the training for ten epochs and we choose a mini-batch-size of 
+three, a directory `out/m10_e10_mbs3/` will be created. The 
+next thing in the pipeline is to copy the `inputs.yaml` file
+into that directory so that we know what parameters we have set
+before the training began, this makes it easier to later look
+back at our training outputs and determine the parameters used
+for that training session, this is important when you will run 
+many different training sessions. It will also create two
+other directories, `models/` and `plots/` inside. After each
+epoch it will output the trained model to `models/` and a 
+plot of the loss + validation curves for that epoch. At the end
+of our training we should have ten models stored in `models/`
+and ten plots stored inside `plots/`, one for each epoch. They
+will be labeled accordingly.
 
-After the download is complete and you have downloaded some
-maps you should have *m* maps in the directories specified
-earlier. They will be zipped therefore you will need to
-unzip the maps using
+In case we run another training session and we choose to use the
+same parameters, the pipeline should recognise that a directory
+with the same filename already exists and instead of overwriting
+that directory it will create another directory as follows
+`out/m10_e10_mbs3_1`, appending a `'_1'` to the directory
+name. It will do that for up to ten directories, so the largest
+number it can go to is `'_9'` copies, it has trouble with 
+appending double digits to the end of the filename but I hope
+that you will not be running a training session over ten times 
+using the same parameters.
 
-> $ gunzip \*.gz
 
-Once the maps are downloaded and unzipped we need to sort them
-into sub-directories. This is because once we have a lot of
-maps they cannot all be loaded into memory at once, therefore
-we place them into sub-directories (say 20 maps per 
-sub-directory) and then load only one sub-directory of maps
-at a time.
+### `python main.py -a proc`
 
-There is a module created that takes care of that for us.
-It can be found in the *data/downloads/* directory and is
-called *sort.py*. This is an API controlled module, I would
-advise running it inside of **ipython** using the command
- 
-> \>\>\> %run sort.py
+This action process or denoises a map specified in the inputs
+file and uses one of the trained models stored in the `out/` 
+directory. In the `inputs.yaml` file you can specify which
+model to use and which epoch of that model you would like to
+use to denoise the specified map stored in the 
+`data/1.5/` directory (this action only searches that directory
+for maps to denoise, it should look also in `data/1.0/` but 
+that hasn't been implemented yet.)
 
-It creates two objects `m1` and `m2` which control the contents
-of the directories *data/downloads/(1.0 and 2.0)* respectively.
-we can run `m1.ls` to print the contents of the *1.0* directory
-and we can use `m1.mkdirs(n)` to create *n* directories
-inside *1.0/* (same goes for *2.0/* directory for which you would 
-use the same commands only replacing `m1` with `m2`). 
-The directories will be numbered as follows
-*[1.0, 2.0, ..., n.0]*
-we will need to generate a list of *m* shuffled numbers, where
-*m* is the number of maps contained in the main
-*1.0/* directory. We can do this using `m1.set_random()`.
-This will set the list of randomly shuffled numbers for the
-entire class which `m2` will have access to also.
-Once you have chosen your desired number of sub-directories
-that you want to divide your maps into, you can use the
-`self.sort()` function to randomly sort all the maps into
-their sub-directories. 
+When denoising a map, ensure you use the same DataLoader 
+parameters that were used to train the model, these include
+the following `[norm, norm_vox, norm_vox_min(max)]` rest of
+the parameters you can mostly get away with, do not play with
+`cshape` and `margin` unless you know what you are doing.
 
-There is also a flatten function `self.flatten()` to move
-all the maps from the sub-directories back into the
-main directory. Do this before downloading new maps to prevent
-downloading twice the same maps.
+This action will load the map, decompose
+it into tiles, pass the tiles through the trained 
+network i.e. denoise them, one-by-one and at the end it will
+recompose the map and save it into the 
+`out/<training_session_name>/denoised/` directory with an
+appropriate filename corresponding to the map ID and epoch
+used.
 
-What you need to ensure also is to set aside a few half-maps
-(maybe 2 or 3) for validation testing, these will be maps
-that won't be used for training but only for testing, that's
-what the directories *1.5/* and *2.5/* are for.
-Make sure that you have the same half-map pairs in 1.5/ and
-2.5/, the training module will use the maps in those directories
-for validation testing. This, you will need to do manually
-so, make sure you move the maps from 1.0 to 1.5 and the maps
-from 2.0 to 2.5 and not copy them. As I said earlier, only need
-to move 2 different half_maps or so, could move more if you
-want though.
+### `python main.py -a moveback`
 
-After you have set aside some maps for testing you can begin
-to sort the maps in 1.0 and 2.0 into their sub-directories,
-you can do this as follows:
+This is a simple action that moves all the maps from the 
+`badMaps` directories back in with the rest of the maps
 
-Easy steps for sorting maps:
-1. Ensure that maps are flattened to main directory using 
-`self.flatten()`
-2. Ensure there are no sub-directories using `self.del_rest()`
-this will delete any empty directories.
+### `python main.py - download`
 
-Then follow the steps:
-```
-self.set_random() # This generates the list of shuffled numbers
-self.mkdirs(n)    # Creates n sub-directories
-self.sort()       # Sorts maps into the generated sub-dirs
-```
-That is all you need to do. Perform this task for both
-directories (1.0/ and 2.0/). Once your maps are sorted
-you can begin training.
+This action downloads the maps based on criteria specified in the
+inputs file 
+`[min_dim, max_dim, min_res, max_res]`. All the downloaded maps
+will land in either `data/1.0/'` or `data/2.0/` directory, in 
+general this action will download pairs of half-maps, one
+will go into one directory and another in the other. If it finds
+that this half-map is already stored in that directory it will not
+download it again.
 
-You can run 
-> $ python train_model.py -dirs number_of_dirs -e number_of_epochs -mbs mini_batch_size
+Before the download begins this action first ensures that 
+the equivalent of `moveback` command takes place in order
+to ensure that we do not download maps that we already have 
+on our system. However, if we have maps stored in the
+`data/1.5(2.5)` directories, it will still download these maps
+again so, be careful. This needs to be fixed in the future.
 
-As you can see the module train_model.py takes in a few
-arguments from the console.
+The downloaded maps will be zipped you would want to unzip them
+using `gunzip *.gz`.
 
-1. -dirs which is the number of directories to include in
-training, if it is not specified, the code will include all
-directories in training (meaning all maps)
-2. -e the number of epochs you want to train for
-3. -mbs the size of the mini-batches, these are the number
-of tiles you want to provide to the network at once, I would
-recommend anything between 3 to 7 in order not to run out
-of memory on the GPU or CPU. A single map can contain upwards
-of 27 tiles so we are not able to load a whole map onto a GPU
-at once therefore we do it in mini-batches of tiles.
-
-Here is a good time to mention that the training is based on
-tiled maps. The original half-maps are tiled using a 
-pre-built module developped by a colleague and I am using
-that module for loading and manipulating the map data.
-All those modules inside of the *utils/ml_toolbox* directory
-have not been built by me, I am simply using them as tools
-for my project. The maps are therefore tiled into blocks
-of 64x64x64 voxels. A single map is divide in *N^3* 
-tiles where *N* is an integer, *N* is determined by the size
-of the map. As an example, a map of size 128x128x128 is divided
-into 3^3 = 27 tiles of size 64x64x64, therefore there
-is some overlapping and padding taking place as part of 
-the tiling procedure.
-
-You can pass different models for training, the one that is
-most commonly trained is the UNet model and that can
-be selected by importing `import unet` in one of the imports
-of the *train_model.py* module. This is set as default.
-The main criteria for a model is that it should take an input
-of 64x64x64 and return an output that is also 64x64x64. As for
-the architecture of the model, it's only limited by imagination
-and the memory of your hardware.
-
-Once we train a model using e.g.
-
-> $ python train_model.py -e 2 -mbs 3
-
-The module should detect whether you have an Nvidia GPU installed
-on your machine and will use that if possible. After training
-is complete it will output the models into a directory named
-*trained_models/*. The training is programmed to output a 
-model after the first epoch and then every 5 epochs after that
-and also at the end of training given the number of epochs is 
-not a multiple of 5 (number of epochs can be any integer).
-Throughout the training it will also be outputting a plot
-of the loss function as function of epochs.
-This plot can be found in the directory named *losses/*.
-
-Once the model has been trained and you have a saved trained
-model you can use it to try and denoise a map.
-
-The trained models will be labeled as follows:
-m{number of maps trained on}_e{number of epochs}_mbs{mini batch size}.pt.
-You can add a tail inside of the API to the filename by
-specifying the `tail` variable inside *train_model.py* the
-default setting is `tail=''` meaning there is no tail. This
-can be useful to distinguish between different loss functions
-or different models you would like to try so you can always 
-add something extra to the file name for your convenience.
-Also to prevent overwriting if the model sees a file already
-exists with the filename inside the trained_models/ directory
-it will append a "\_n" to the end of the filename where n
-is the number of copies, so no need to worry about over writing.
-
-Once you have saved a trained model you can use it to denoise
-a map. That is what the *denoise.py* module is for.
-
-For now it only uses the maps stored in the 
-*data/downloads/1.5/* directory, this is because these are
-maps the model hasn't seen before so they can act as a good
-test for the trained model. To denoise one of the maps in that
-directory simply write
-
-> $ python denoise.py --model {filename of model} --id {id of the map you want to denoise}
-
-The denoised map will be sent to the directory 
-*data/downloads/1.0preds* (preds for predictions), you will
-be able to find your denoised map there and can use chimera
-or other tools to view it. It will adapt the label of the 
-model used to denoise it, it is also protected from over writing
-by appending "\_n" to the end of the filename.
+## `xcorr_sort.py`

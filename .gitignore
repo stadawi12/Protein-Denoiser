@@ -1,41 +1,49 @@
-data/downloads/1.0preds/
-data/downloads/2.0preds/
-data/downlaods/map_tally.csv
+# Ignore all half-maps in data
+data/1.0preds/
+data/2.0preds/
 
+data/1.0/*
+data/2.0/*
+!data/1.0/.gitkeep
+!data/2.0/.gitkeep
+
+data/1.0badMaps/*
+data/2.0badMaps/*
+!data/1.0badMaps/.gitkeep
+!data/2.0badMaps/.gitkeep
+
+data/1.5/*
+data/2.5/*
+!data/1.5/.gitkeep
+!data/2.5/.gitkeep
+
+# Ignore trained models
+trained_models/
+
+# Ignore all output files
+out/*
+!out/.gitkeep
+
+
+# Ignore several __pycache__folders
+__pycache__/
+data/__pycache__
+lib/__pycache__
+lib/ml_toolbox/src/__pycache__/
+lib/ml_toolbox/__pycache__/
+lib/utils/__pycache__
+lib/preprocess/__pycache__
+lib/net/__pycache__
 *.pyc
 *.pyo
 
-__pycache__/
-utils/__pycache__/
-utils/ml_toolbox/src/__pycache__/
+# Ignore job scripts from SCARF
+job*
+jobout/
 
-utils/ml_toolbox/tests/
-
-data/downloads/1.0norm/
-
-data/downloads/1.0/*
-!data/downloads/1.0/.gitkeep
-
-data/downloads/2.0/*
-!data/downloads/2.0/.gitkeep
-
-data/downloads/1.0badMaps/*
-!data/downloads/1.0badMaps/.gitkeep
-
-data/downloads/2.0badMaps/*
-!data/downloads/2.0badMaps/.gitkeep
-
-data/downloads/1.5/*
-data/downloads/2.5/*
-!data/downloads/1.5/.gitkeep
-!data/downloads/2.5/.gitkeep
-
-data/maps/
-
-trained_models/*
-!trained_models/.gitkeep
-
-losses/*
-!losses/.gitkeep
-!losses/plot_all.py
-!losses/plot_epochs.py
+# Ignore maps and pdbs in synthetic_data
+synthetic_data/maps/
+synthetic_data/pdbs/
+synthetic_data/noisy/
+synthetic_data/denoised/
+synthetic_data/data.csv

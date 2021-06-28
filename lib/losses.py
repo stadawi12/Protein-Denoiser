@@ -1,0 +1,1 @@
+def power_loss(

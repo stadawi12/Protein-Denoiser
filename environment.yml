@@ -1,0 +1,15 @@
+dependencies:
+ - tensorflow
+ - torch
+ - matplotlib
+ - mrcfile
+ - Bio
+ - tqdm
+ - progressbar2
+ - numpy
+ - pandas
+ - bs4
+ - scipy
+ - pyyaml
+ccpem-python dependencies:
+ - pyyaml # can be install via ccpem-python -m pip pyyaml

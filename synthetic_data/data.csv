@@ -1,0 +1,6 @@
+map,res,model,epoch,clipped,centre,sigma,cc noisy,cc denoised
+pdb6nyy.mrc,3,m93_e20_mbs3,20,no,0,0.2,0.4420705,0.50189686
+pdb6nyy.mrc,3,m165_e20_mbs5,20,no,0,0.2,0.42938617,0.38224325
+pdb6nyy.mrc,3,m93_e20_mbs3_huber01,20,no,0,0.2,0.43690312,0.46136174
+pdb6nyy.mrc,3.0,m93_e20_mbs3_huber001,20,no,0,0.2,0.4477757,0.38928798
+pdb6nyy.mrc,3.0,m93_e20_mbs5,20,no,0,0.2,0.4286367,0.4398543

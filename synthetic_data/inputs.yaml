@@ -1,0 +1,21 @@
+# GENERAL INPUTS
+map_name      : 'pdb6nyy'      # Name of map to work with
+model_name    : 'm93_e20_mbs3' # Denoise model to use
+epoch         : 20             # Epoch of denoise model
+res           : 3.0            # resolution of map
+# ADD NOISE INPUTS
+centre        : 0             # centre of gauss noise distr.
+sigma         : 0.2           # standard deviation of noise
+clip          : False         # Clip noise? True or False
+seed          : 3             # random generator seed
+# DENOISING INPUTS
+cshape        : 64          # size of tiles
+margin        : 8           # margin
+norm          : True        # normalise maps between 0 to 1?
+norm_vox      : None        # voxel size
+norm_vox_min  : 0           # voxel size limit minimum
+norm_vox_max  : 10          # voxel size limit maximum
+device        : "cpu"       # device 'cpu' or 'cuda:0'
+denoise_anyway: False       # Denoise even if already denoised
+# CROSS CORRELATE INPUTS
+append        : False         # append this to data.csv?
