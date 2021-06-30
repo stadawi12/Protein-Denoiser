@@ -21,15 +21,27 @@ import os
 
 class Process:
 
-    def __init__(self, Network, input_data, 
-            out_path = 'out', data_path = 'data'):
+    """Class that takes care of denoising maps
+    """
 
+    def __init__(self, Network, input_data, 
+            out_path = 'out'):
+        """
+        Parameters
+        ----------
+        Network : 
+            example: import unet
+            Network = unet
+        input_data : dict
+            dictionary that holds all parameters and options for
+            for this class
+        out_path : str
+            path to training session outputs
+        """
+        
         # INITS
         self.Network = Network
         self.out_path = out_path
-        self.data_path = data_path
-        self.test_maps_path = os.path.join(data_path, '1.5')
-        self.available_test_maps = os.listdir(self.test_maps_path)
 
         # INPUT DATA
         self.cshape        = input_data["cshape"]
@@ -40,20 +52,33 @@ class Process:
                              input_data["norm_vox_max"])
         self.proc_model    = input_data["proc_model"]
         self.proc_epoch    = input_data["proc_epoch"]
-        self.proc_map_name = input_data["proc_map_name"]
         self.device        = torch.device(input_data["device"])
 
-        # GET PATH TO MODEL
-        self.models_path = self.get_path_to_models()
+        # Get path to model
+        self.model_path = self.get_path_to_model()
+        # Get path to training outputs (where models, plots etc. are)
         self.training_outputs_path =  \
             self.get_path_to_training_outputs()
 
     # process function for synthetic data
-    def process_synthetic(self):
-        res = self.res
+    def process_synthetic(self, input_data):
+
+        # Read synthetic specific inputs
+        res      = str(input_data["res"])
+        centre   = input_data["centre"]
+        sigma    = input_data["sigma"]
+        map_name = input_data["map_name"] + '.mrc'
+
+        # get path to maps
+        maps_path = os.path.join('noisy', res, f"c_{centre}_s_{sigma}")
+
+        # Get available maps
+        self.available_maps = os.listdir(maps_path)
+
         # Load map and normalise it
-        sample = self.load_map(self.proc_map_name,
+        sample = self.load_map(maps_path, map_name,
                 self.norm)
+
         print(f"Shape of map: {sample.map.shape}")
         print("min, max of map: {}, {}".format(
             np.min(sample.map), np.max(sample.map)))
@@ -63,11 +88,11 @@ class Process:
         # Load model
         unet = self.Network.UNet()
         # Load the trained unet model
-        unet.load_state_dict(torch.load(self.models_path,
+        unet.load_state_dict(torch.load(self.model_path,
             map_location=self.device))
         unet = unet.to(self.device)  # move unet to device
 
-        print(f"Denoising {self.proc_map_name}...")
+        print(f"Denoising {map_name}...")
         outs = []
         with torch.no_grad():
             """
@@ -96,7 +121,7 @@ class Process:
         # Normalise tiles so that they have same range as 
         # the noisy map
         # Load noisy map with norm = False
-        map_raw = self.load_map(self.proc_map_name, 
+        map_raw = self.load_map(maps_path, map_name, 
                 False)
         # Range set by noisy raw map
         a = np.min(map_raw.map) 
@@ -125,37 +150,44 @@ class Process:
         # path where to save the recomposed map
         path = os.path.join('denoised',res,
             self.proc_model,
-            f"e_{self.proc_epoch}_{self.proc_map_name}")
+            f"e_{self.proc_epoch}_{map_name}")
             
         # Finally save the map to the path
         sample.save_map(map_rec=True, path=path)
                 
         # Print statement saying where map was saved to
-        print(f"Saved map to: denoised/{self.res}/" +
+        print(f"Saved map to: denoised/{res}/" +
               f"{self.proc_model}/e_" +
-              f"{self.proc_epoch}_{self.proc_map_name}")
+              f"{self.proc_epoch}_{map_name}")
 
 
 
     # process function for real data
-    def process(self):
+    def process(self, input_data):
+
+        map_name = input_data["map_name"]
+        res      = input_data["res"]
+
+        # get path to maps
+        maps_path = os.path.join('data', res)
+
+        # Get available maps
+        self.available_maps = os.listdir(maps_path)
 
         # Load tiles
-        sample = self.load_map(self.proc_map_name,
+        sample = self.load_map(maps_path, map_name,
                 self.norm)
-        print(sample.map.shape)
-        print(np.min(sample.map), np.max(sample.map))
         tiles = sample.tiles
         tiles = self.to_torch_list(tiles)
 
         # Load model
         unet = self.Network.UNet()
         # Load the trained unet model
-        unet.load_state_dict(torch.load(self.models_path,
+        unet.load_state_dict(torch.load(self.model_path,
             map_location=self.device))
         unet = unet.to(self.device)  # move unet to device
 
-        print(f"Denoising {self.proc_map_name}...")
+        print(f"Denoising {map_name}...")
         outs = []
         with torch.no_grad():
             """
@@ -188,14 +220,14 @@ class Process:
 
         sample.save_map(map_rec=True, path=os.path.join(
             path,'denoised',
-            f"e_{self.proc_epoch}_{self.proc_map_name}"))
+            f"e_{self.proc_epoch}_{map_name}"))
 
         print(f"Saved map to: out/{self.proc_model}" +
         f"/denoised/e_{self.proc_epoch}_" +
-        f"{self.proc_map_name}")
+        f"{map_name}")
 
 
-    def get_path_to_models(self):
+    def get_path_to_model(self):
         p = os.path.join(self.out_path, self.proc_model,
                 'models', f"epoch_{self.proc_epoch}.pt")
         return p
@@ -205,13 +237,13 @@ class Process:
 
         return p
 
-    def load_map(self, map_name, norm):
+    def load_map(self, maps_path, map_name, norm):
 
-        assert map_name in self.available_test_maps, \
+        assert map_name in self.available_maps, \
         f"The map {map_name} is not stored, try one from" \
-                + f"{self.available_test_maps}"
+                + f"{self.available_maps}"
 
-        map_path = os.path.join(self.test_maps_path, map_name)
+        map_path = os.path.join(maps_path, map_name)
         sample = Sample(1, map_path) 
         sample.decompose(
                 cshape       = self.cshape,

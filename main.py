@@ -28,7 +28,7 @@ if __name__ == '__main__':
     if args.action == 'proc':
 
         p1 = Process(unet, input_data)
-        p1.process()
+        p1.process(input_data)
 
     if args.action == 'moveback':
         """moves data from badMaps back to good maps"""
