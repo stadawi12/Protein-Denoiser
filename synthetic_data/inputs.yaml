@@ -1,6 +1,6 @@
 # GENERAL INPUTS
 map_name      : 'pdb6nyy'      # Name of map to work with
-proc_model    : 'm84_e20_mbs5_SGDfree' # Denoise model to use
+proc_model    : 'm84_e20_mbs3_wd' # Denoise model to use
 proc_epoch    : 20             # Epoch of denoise model
 res           : 3.0            # resolution of map
 # ADD NOISE INPUTS
@@ -16,6 +16,6 @@ norm_vox      : None        # voxel size
 norm_vox_min  : 0           # voxel size limit minimum
 norm_vox_max  : 10          # voxel size limit maximum
 device        : "cpu"       # device 'cpu' or 'cuda:0'
-denoise_anyway: True       # Denoise even if already denoised
+denoise_anyway: False       # Denoise even if already denoised
 # CROSS CORRELATE INPUTS
-append        : True         # append this to data.csv?
+append        : False         # append this to data.csv?

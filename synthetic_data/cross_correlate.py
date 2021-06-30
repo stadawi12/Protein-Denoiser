@@ -15,8 +15,8 @@ def cross_correlate(input_data):
 
     filename = input_data["map_name"] + '.mrc'
     res      = str(input_data["res"])
-    epoch    = input_data["epoch"]
-    model    = input_data["model_name"]
+    epoch    = input_data["proc_epoch"]
+    model    = input_data["proc_model"]
     append   = input_data["append"]
     clip     = input_data["clip"]
     centre   = input_data["centre"]

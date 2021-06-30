@@ -13,8 +13,8 @@ def normalise(input_data):
 
     filename = input_data["map_name"] + '.mrc'
     res      = str(input_data["res"])
-    epoch    = input_data["epoch"]
-    model    = input_data["model_name"]
+    epoch    = input_data["proc_epoch"]
+    model    = input_data["proc_model"]
 
     clean_path = os.path.join('maps',res,filename)
     denoised_path = os.path.join('denoised',res,
