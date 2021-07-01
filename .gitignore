@@ -43,6 +43,7 @@ job*
 jobout/
 
 # Ignore maps and pdbs in synthetic_data
+synthetic_data/jobtest
 synthetic_data/maps/*
 synthetic_data/pdbs/*
 synthetic_data/noisy/*
