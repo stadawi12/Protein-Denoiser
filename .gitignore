@@ -23,6 +23,7 @@ trained_models/
 # Ignore all output files
 out/*
 !out/.gitkeep
+!out/fetch.py
 
 
 # Ignore several __pycache__folders

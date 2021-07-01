@@ -27,6 +27,6 @@ map_name : "0552.map"  # map to be denoised
 threshold     : 0.80        # cross correlation threshold
 # DATA DOWNLOAD INPUTS
 min_dim       : 0           # Min map dimension for download
-max_dim       : 250         # Max map dimension for download
+max_dim       : 200         # Max map dimension for download
 min_res       : 3           # Min map resolution for download
-max_res       : 7           # Max map resolution for download
+max_res       : 4           # Max map resolution for download
