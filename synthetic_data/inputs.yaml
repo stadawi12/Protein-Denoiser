@@ -15,7 +15,7 @@ norm          : True        # normalise maps between 0 to 1?
 norm_vox      : None        # voxel size
 norm_vox_min  : 0           # voxel size limit minimum
 norm_vox_max  : 10          # voxel size limit maximum
-device        : "cpu"       # device 'cpu' or 'cuda:0'
+device        : "cuda:0"       # device 'cpu' or 'cuda:0'
 denoise_anyway: False       # Denoise even if already denoised
 # CROSS CORRELATE INPUTS
 append        : False         # append this to data.csv?

@@ -1,0 +1,67 @@
+cpu-bind=MASK - cn2g17, task  0  0 [1586]: mask 0x404 set
+cpu-bind=MASK - cn2g17, task  0  0 [1641]: mask 0x404 set
+sh: chimera: command not found
+Generating density map from model...
+2021-06-30 12:27:08.923398: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /apps/cuda/cudnn/7.2.1/lib64:/apps/eb/software/CUDA/10.1.105-GCC-8.2.0-2.31.1/nvvm/lib64:/apps/eb/software/CUDA/10.1.105-GCC-8.2.0-2.31.1/extras/CUPTI/lib64:/apps/eb/software/CUDA/10.1.105-GCC-8.2.0-2.31.1/lib64:/apps/eb/software/binutils/2.31.1-GCCcore-8.2.0/lib:/apps/eb/software/GCCcore/8.2.0/lib/gcc/x86_64-pc-linux-gnu/8.2.0:/apps/eb/software/GCCcore/8.2.0/lib64:/apps/eb/software/GCCcore/8.2.0/lib:/apps/eb/software/Python/3.8.2-GCCcore-9.3.0/lib:/apps/eb/software/libffi/3.3-GCCcore-9.3.0/lib64:/apps/eb/software/libffi/3.3-GCCcore-9.3.0/lib:/apps/eb/software/GMP/6.2.0-GCCcore-9.3.0/lib:/apps/eb/software/XZ/5.2.5-GCCcore-9.3.0/lib:/apps/eb/software/SQLite/3.31.1-GCCcore-9.3.0/lib:/apps/eb/software/Tcl/8.6.10-GCCcore-9.3.0/lib:/apps/eb/software/libreadline/8.0-GCCcore-9.3.0/lib:/apps/eb/software/ncurses/6.2-GCCcore-9.3.0/lib:/apps/eb/software/bzip2/1.0.8-GCCcore-9.3.0/lib:/apps/CUDA/10.1.105-GCC-8.2.0-2.31.1/extras/CUPTI/lib64
+2021-06-30 12:27:08.923460: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+Adding noise to density map...
+Traceback (most recent call last):
+  File "add_noise.py", line 63, in <module>
+    add_noise(input_data)
+  File "add_noise.py", line 26, in add_noise
+    s1 = Sample(3.0, path)
+  File "../lib/utils/ml_toolbox/src/proteins.py", line 137, in __init__
+    ximg, xorig, xsamp, xcell = load_map(xpath)
+  File "../lib/utils/ml_toolbox/src/proteins.py", line 542, in load_map
+    f = mrc.open(path, mode='r+')
+  File "/home/vol08/scarf1018/python3.8.2/lib/python3.8/site-packages/mrcfile/load_functions.py", line 138, in open
+    return NewMrc(name, mode=mode, permissive=permissive,
+  File "/home/vol08/scarf1018/python3.8.2/lib/python3.8/site-packages/mrcfile/mrcfile.py", line 108, in __init__
+    self._open_file(name)
+  File "/home/vol08/scarf1018/python3.8.2/lib/python3.8/site-packages/mrcfile/mrcfile.py", line 125, in _open_file
+    self._iostream = open(name, self._mode + 'b')
+FileNotFoundError: [Errno 2] No such file or directory: 'maps/3.0/pdb6nyy.mrc'
+2021-06-30 12:27:16.938368: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /apps/cuda/cudnn/7.2.1/lib64:/apps/eb/software/CUDA/10.1.105-GCC-8.2.0-2.31.1/nvvm/lib64:/apps/eb/software/CUDA/10.1.105-GCC-8.2.0-2.31.1/extras/CUPTI/lib64:/apps/eb/software/CUDA/10.1.105-GCC-8.2.0-2.31.1/lib64:/apps/eb/software/binutils/2.31.1-GCCcore-8.2.0/lib:/apps/eb/software/GCCcore/8.2.0/lib/gcc/x86_64-pc-linux-gnu/8.2.0:/apps/eb/software/GCCcore/8.2.0/lib64:/apps/eb/software/GCCcore/8.2.0/lib:/apps/eb/software/Python/3.8.2-GCCcore-9.3.0/lib:/apps/eb/software/libffi/3.3-GCCcore-9.3.0/lib64:/apps/eb/software/libffi/3.3-GCCcore-9.3.0/lib:/apps/eb/software/GMP/6.2.0-GCCcore-9.3.0/lib:/apps/eb/software/XZ/5.2.5-GCCcore-9.3.0/lib:/apps/eb/software/SQLite/3.31.1-GCCcore-9.3.0/lib:/apps/eb/software/Tcl/8.6.10-GCCcore-9.3.0/lib:/apps/eb/software/libreadline/8.0-GCCcore-9.3.0/lib:/apps/eb/software/ncurses/6.2-GCCcore-9.3.0/lib:/apps/eb/software/bzip2/1.0.8-GCCcore-9.3.0/lib:/apps/CUDA/10.1.105-GCC-8.2.0-2.31.1/extras/CUPTI/lib64
+2021-06-30 12:27:16.938412: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+Traceback (most recent call last):
+  File "denoise.py", line 43, in <module>
+    denoise(input_data)
+  File "denoise.py", line 28, in denoise
+    p1.process_synthetic(input_data)
+  File "../lib/Process.py", line 76, in process_synthetic
+    self.available_maps = os.listdir(maps_path)
+FileNotFoundError: [Errno 2] No such file or directory: 'noisy/3.0/c_0_s_0.2'
+2021-06-30 12:27:20.089120: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /apps/cuda/cudnn/7.2.1/lib64:/apps/eb/software/CUDA/10.1.105-GCC-8.2.0-2.31.1/nvvm/lib64:/apps/eb/software/CUDA/10.1.105-GCC-8.2.0-2.31.1/extras/CUPTI/lib64:/apps/eb/software/CUDA/10.1.105-GCC-8.2.0-2.31.1/lib64:/apps/eb/software/binutils/2.31.1-GCCcore-8.2.0/lib:/apps/eb/software/GCCcore/8.2.0/lib/gcc/x86_64-pc-linux-gnu/8.2.0:/apps/eb/software/GCCcore/8.2.0/lib64:/apps/eb/software/GCCcore/8.2.0/lib:/apps/eb/software/Python/3.8.2-GCCcore-9.3.0/lib:/apps/eb/software/libffi/3.3-GCCcore-9.3.0/lib64:/apps/eb/software/libffi/3.3-GCCcore-9.3.0/lib:/apps/eb/software/GMP/6.2.0-GCCcore-9.3.0/lib:/apps/eb/software/XZ/5.2.5-GCCcore-9.3.0/lib:/apps/eb/software/SQLite/3.31.1-GCCcore-9.3.0/lib:/apps/eb/software/Tcl/8.6.10-GCCcore-9.3.0/lib:/apps/eb/software/libreadline/8.0-GCCcore-9.3.0/lib:/apps/eb/software/ncurses/6.2-GCCcore-9.3.0/lib:/apps/eb/software/bzip2/1.0.8-GCCcore-9.3.0/lib:/apps/CUDA/10.1.105-GCC-8.2.0-2.31.1/extras/CUPTI/lib64
+2021-06-30 12:27:20.089168: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+Normalising denoised map ...
+Traceback (most recent call last):
+  File "normalise.py", line 48, in <module>
+    normalise(input_data)
+  File "normalise.py", line 24, in normalise
+    clean    = Sample(3.0, clean_path)
+  File "../lib/utils/ml_toolbox/src/proteins.py", line 137, in __init__
+    ximg, xorig, xsamp, xcell = load_map(xpath)
+  File "../lib/utils/ml_toolbox/src/proteins.py", line 542, in load_map
+    f = mrc.open(path, mode='r+')
+  File "/home/vol08/scarf1018/python3.8.2/lib/python3.8/site-packages/mrcfile/load_functions.py", line 138, in open
+    return NewMrc(name, mode=mode, permissive=permissive,
+  File "/home/vol08/scarf1018/python3.8.2/lib/python3.8/site-packages/mrcfile/mrcfile.py", line 108, in __init__
+    self._open_file(name)
+  File "/home/vol08/scarf1018/python3.8.2/lib/python3.8/site-packages/mrcfile/mrcfile.py", line 125, in _open_file
+    self._iostream = open(name, self._mode + 'b')
+FileNotFoundError: [Errno 2] No such file or directory: 'maps/3.0/pdb6nyy.mrc'
+pdb6nyy.mrc
+Traceback (most recent call last):
+  File "cross_correlate.py", line 92, in <module>
+    cross_correlate(input_data)
+  File "cross_correlate.py", line 56, in cross_correlate
+    clean_map = read_mapfile(clean_path)
+  File "cross_correlate.py", line 34, in read_mapfile
+    mrcobj=mrcfile.open(map_path,mode='r')
+  File "/home/vol08/scarf1018/CCP_EM/ccpem-1.5.0/lib/python2.7/site-packages/mrcfile/load_functions.py", line 136, in open
+    header_only=header_only)
+  File "/home/vol08/scarf1018/CCP_EM/ccpem-1.5.0/lib/python2.7/site-packages/mrcfile/mrcfile.py", line 108, in __init__
+    self._open_file(name)
+  File "/home/vol08/scarf1018/CCP_EM/ccpem-1.5.0/lib/python2.7/site-packages/mrcfile/mrcfile.py", line 125, in _open_file
+    self._iostream = open(name, self._mode + 'b')
+IOError: [Errno 2] No such file or directory: 'maps/3.0/pdb6nyy.mrc'
