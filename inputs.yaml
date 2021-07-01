@@ -22,7 +22,7 @@ gamma         : 0.9         # lr multiplier per epoch
 res           : '1.5'       # which res? [1.0,2.0,1.5,2.5] etc.
 proc_model    : 'm84_e20_mbs3_wd' # denoise model
 proc_epoch    : 20          # epoch of model for processing
-map_name : "0552.map"  # map to be denoised
+map_name      : "0023.map"  # map to be denoised
 # CROSS CORRELATION INPUTS
 threshold     : 0.80        # cross correlation threshold
 # DATA DOWNLOAD INPUTS

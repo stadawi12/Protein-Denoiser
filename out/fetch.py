@@ -6,7 +6,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-n', '--name', type=str,
         help='name of training session to copy')
 
-parser.add_argument('-e', '--epoch', type=int,
+parser.add_argument('-e', '--epoch', type=int, default=20,
         help='epoch')
 
 args = parser.parse_args()
