@@ -48,3 +48,7 @@ synthetic_data/pdbs/
 synthetic_data/noisy/
 synthetic_data/denoised/
 synthetic_data/data.csv
+!synthetic_data/maps/.gitkeep
+!synthetic_data/pdbs/.gitkeep
+!synthetic_data/noisy/.gitkeep
+!synthetic_data/denoised/.gitkeep
