@@ -13,3 +13,4 @@ dependencies:
  - pyyaml
 ccpem-python dependencies:
  - pyyaml # can be install via ccpem-python -m pip pyyaml
+# Chimera needs to be installed for map generation
