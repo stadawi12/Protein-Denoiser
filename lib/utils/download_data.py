@@ -102,7 +102,7 @@ def download(entry, tail, global_path='data', path=None):
         file = open(file_path, 'wb')
         size = ftp.size(tail)
         global pbar
-        pbar = ProgressBar(maxval=size)
+        pbar = ProgressBar(max_val=size)
         pbar.start()
         ftp.retrbinary("RETR " + tail, file_write)
         file = file.close()

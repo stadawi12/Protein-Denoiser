@@ -10,7 +10,7 @@ def get_entries():
 
     # load csv file containing all half maps found
     global path
-    path = '../data/halfMaps.csv'
+    path = '../lib/utils/halfMaps.csv'
     global data
     data = pd.read_csv(path)
     # select Entry collumn only

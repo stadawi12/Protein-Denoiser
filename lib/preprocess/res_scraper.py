@@ -9,7 +9,7 @@ def get_entries():
     url = 'https://www.ebi.ac.uk/pdbe/emdb/'
 
     # load the csv file with all maps found
-    path = '../data/halfMaps.csv'
+    path = '../lib/utils/halfMaps.csv'
     global data
     data = pd.read_csv(path)
     # select the Entry collumn only

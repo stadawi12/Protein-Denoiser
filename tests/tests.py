@@ -1,7 +1,9 @@
 # Adding paths to modules to be tested
 import sys
 import os
-sys.path.append('../utils')     # utils
+sys.path.append('../lib/net')     # utils
+sys.path.append('../lib/preprocess')     # utils
+sys.path.append('../lib/utils')     # utils
 
 def blockPrint():
     sys.stdout = open(os.devnull, 'w')
@@ -19,10 +21,9 @@ import torch
 
 # Importing my modules to be tested
 from unet import UNet, crop_img
-import loader as l
 from res_scraper import get_reses
 from size_scraper import get_dims
-from file_downloader import download
+from download_data import download
 enablePrint()
 
 
@@ -92,7 +93,7 @@ class Test_functions(unittest.TestCase):
         tail  = 'emd_0552_half_map_1.map.gz'
         path  = 'fake_maps/'
         message = 'Map stored'
-        out = download(entry, tail, path)
+        out = download(entry, tail, path=path)
         enablePrint()
         self.assertTrue(out == message)
 
@@ -102,7 +103,7 @@ class Test_functions(unittest.TestCase):
         tail  = 'emd_10161_half_map_1.map.gz'
         path  = 'fake_maps/'
         message = 'Map stored'
-        out = download(entry, tail, path)
+        out = download(entry, tail, path=path)
         enablePrint()
         self.assertTrue(out == message)
 
@@ -111,7 +112,7 @@ class Test_functions(unittest.TestCase):
         entry = 'EMD-3650'
         tail  = 'emd_3650_half_map_1.map.gz'
         path  = 'fake_maps/'
-        download(entry, tail, path)
+        download(entry, tail, path=path)
         contents = os.listdir('fake_maps/')
         filename = '3650.map.gz'
         enablePrint()
