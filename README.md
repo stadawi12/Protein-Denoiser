@@ -135,9 +135,8 @@ file and uses one of the trained models stored in the `out/`
 directory. In the `inputs.yaml` file you can specify which
 model to use and which epoch of that model you would like to
 use to denoise the specified map stored in the 
-`data/1.5/` directory (this action only searches that directory
-for maps to denoise, it should look also in `data/1.0/` but 
-that hasn't been implemented yet.)
+`data/<res>/` directory where `res` can be specified in the 
+`inputs.yaml` file.
 
 When denoising a map, ensure you use the same DataLoader 
 parameters that were used to train the model, these include
@@ -179,4 +178,19 @@ again so, be careful. This needs to be fixed in the future.
 The downloaded maps will be zipped you would want to unzip them
 using `gunzip *.gz`.
 
-## `xcorr_sort.py`
+## `xcorrSort.py`
+
+This module is used for cleaning our data, the training maps in
+directories `data/1.0` and `data/2.0` will be cross-correlated
+with each other and a `threshold` can be set in the `inputs.yaml` file.
+The cross-correlation between two maps is a measure of similarity
+between the two half-maps, it ranges from -1 to 1 where -1 is 
+negatively correlated and 1 means they are exactly the same.
+Any maps whose correlation is below the `threshold` will be moved
+to their corresponding `badMaps/` directories which can be found in
+the `data/` directory. Any maps found in the `badMaps/` directories
+will by default not be used in training. If you want to move maps
+back out of the `badMaps` directory, you should use the action
+`moveback` (`$python main.py -a moveback`). You can then rerun the
+`xcorr_sort.py` module with a different `threshold` value.
+IMPORTANT: To run this module you will need to use `ccpem-python`.
