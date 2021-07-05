@@ -158,20 +158,17 @@ def Train(Network, inputs_path='inputs.yaml',
             
             # Specify number of tiles to pass per map
             # If set to None then all
-            if no_of_tiles == None:
-                no_of_tiles = inpt.tiles.shape[0]
-
-            # step size in for loop
-            step = min(no_of_tiles, mbs)
+            if no_of_tiles == 0:
+                no_of_tiles = inpt_tiles.shape[0]
 
             # Pass mbs tiles through network
-            for i in range(0, no_of_tiles, step):
+            for i in range(0, no_of_tiles, mbs):
                 
                 # Grab mbs number of input tiles
-                x = inpt_tiles[i:i+step, 0:1, :, :, :]
+                x = inpt_tiles[i:i+mbs, 0:1, :, :, :]
                 x = x.to(device)
                 # Grab mbs number of target tiles 
-                y = trgt_tiles[i:i+step, 0:1, :, :, :]
+                y = trgt_tiles[i:i+mbs, 0:1, :, :, :]
                 y = y.to(device)
                 # Pass input tiles through network
                 unet.zero_grad()
@@ -218,15 +215,10 @@ def Train(Network, inputs_path='inputs.yaml',
                     assert inpt_tiles.shape == trgt_tiles.shape, \
                             "WARNING: Shapes do NOT match"
 
-                    if no_of_tiles == None:
-                        no_of_tiles = inpt_tiles.shape[0]
-
-                    step = min(no_of_tiles, mbs)
-
-                    for i in range(0, no_of_tiles, step):
-                        x = inpt_tiles[i:i+step,:,:,:,:]
+                    for i in range(0, no_of_tiles, mbs):
+                        x = inpt_tiles[i:i+mbs,:,:,:,:]
                         x = x.to(device)
-                        y = trgt_tiles[i:i+step,:,:,:,:]
+                        y = trgt_tiles[i:i+mbs,:,:,:,:]
                         y = y.to(device)
                         out = unet(x)
                         # TODO make loss function global

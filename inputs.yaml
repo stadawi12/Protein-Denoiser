@@ -12,7 +12,7 @@ num_workers   : 2           # number of workers for DataLoader
 epochs        : 1           # number of epochs
 mbs           : 3           # mini batch size 
 batch_size    : 1           # number of maps to load at a time
-no_of_tiles   : None
+no_of_tiles   : 0           # number of tiles per map, 0 = all
 device        : "cpu"       # device 'cpu' or 'cuda:0'
 lr            : 0.001       # learning rate
 tail          : '_test'       # add tail to output filename
@@ -21,9 +21,9 @@ weight_decay  : 0.0001      # weight decay for Adam
 gamma         : 0.9         # lr multiplier per epoch
 # DENOISING INPUTS 
 res           : '1.5'       # res to look for map in [1.0,2.0,1.5,2.5]
-proc_model    : 'm84_e20_mbs3_wd' # denoise model
+proc_model    : 'm84_e20_mbs5_SGDfree' # denoise model
 proc_epoch    : 20          # epoch of model for processing
-map_name      : "0023.map"  # map to be denoised
+map_name      : "0552.map"  # map to be denoised
 # CROSS CORRELATION INPUTS
 threshold     : 0.73        # cross correlation threshold
 # DATA DOWNLOAD INPUTS
