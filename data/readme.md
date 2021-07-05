@@ -16,14 +16,3 @@ the network so they will serve as unseen test examples.
 The (1.0 and 2.0)badMaps/ directories are used for 
 storing half-maps whose cross-correlation is below
 our desired threshold.
-
-Inside of directories [1.0, 2.0, 1.5, 2.5] we will find
-a sub-directory structure. Half-maps will be stored in
-sub-directories named [1.0, 2.0, 3.0,..., n.0] each
-sub-directory will be populated with half-maps, half-maps
-will be equally divided between those sub-directories
-with the exception the the last sub-directory (n.0) might
-contain fewer maps.
-This sub-directory structure is used for loading maps into
-memory, only one sub-directory of maps will be loaded into
-memory at once, this is to prevent memory overflow.
