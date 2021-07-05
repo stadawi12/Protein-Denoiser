@@ -1,6 +1,6 @@
 # DATALOADER INPUTS 
 cshape        : 64          # size of tiles
-margin        : 8           # margin
+margin        : 1           # margin
 norm          : True        # normalise maps between 0 to 1?
 norm_vox      : None        # voxel size
 norm_vox_min  : 0           # voxel size limit minimum
@@ -9,20 +9,21 @@ validate      : True        # Set validate True or False
 shuffle       : True        # Shuffle data after each epoch
 num_workers   : 2           # number of workers for DataLoader
 # TRAINING INPUTS
-epochs        : 20           # number of epochs
-mbs           : 3           # mini batch size 
+epochs        : 1           # number of epochs
+mbs           : 1           # mini batch size 
 batch_size    : 1           # number of maps to load at a time
-device        : "gpu"       # device 'cpu' or 'cuda:0'
+no_of_tiles   : 1           # number of tiles per map, None=All
+device        : "cpu"       # device 'cpu' or 'cuda:0'
 lr            : 0.001       # learning rate
-tail          : '_wd'       # add tail to output filename
+tail          : '_test'       # add tail to output filename
 loss_index    : 0       # loss funct. 0 for mse 4 for mse^2
 weight_decay  : 0.0001      # weight decay for Adam
 gamma         : 0.9         # lr multiplier per epoch
 # DENOISING INPUTS 
 res           : '1.5'       # which res? [1.0,2.0,1.5,2.5] etc.
-proc_model    : 'm84_e20_mbs3_wd' # denoise model
-proc_epoch    : 20          # epoch of model for processing
-map_name      : "0023.map"  # map to be denoised
+proc_model    : 'm1_e1_mbs1_test' # denoise model
+proc_epoch    : 1          # epoch of model for processing
+map_name      : "3650.map"  # map to be denoised
 # CROSS CORRELATION INPUTS
 threshold     : 0.80        # cross correlation threshold
 # DATA DOWNLOAD INPUTS

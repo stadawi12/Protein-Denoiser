@@ -163,7 +163,7 @@ class Process:
 
 
     # process function for real data
-    def process(self, input_data):
+    def process(self, input_data, test=False):
 
         map_name = input_data["map_name"]
         res      = input_data["res"]

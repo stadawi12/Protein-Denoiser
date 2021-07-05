@@ -12,6 +12,7 @@ num_workers   : 2           # number of workers for DataLoader
 epochs        : 1           # number of epochs
 mbs           : 3           # mini batch size 
 batch_size    : 1           # number of maps to load at a time
+no_of_tiles   : None
 device        : "cpu"       # device 'cpu' or 'cuda:0'
 lr            : 0.001       # learning rate
 tail          : '_test'       # add tail to output filename

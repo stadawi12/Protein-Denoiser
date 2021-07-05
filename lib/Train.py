@@ -26,10 +26,15 @@ def Train(Network, inputs_path='inputs.yaml',
 
     Parameters
     ----------
+    Network : module
+        example, import unet, Network=unet
     data_path : str
-        Path to the data folder
-    input_data : dict
-        A dictionary containing all necessary variables
+        Path to data folder
+    inputs_path : str
+        path to the inputs.yaml file
+    out_path : str
+        path to the directory where you want the training outputs
+        to go, e.g. training models, plots etc.
 
     """
     input_data = Read_Input(inputs_path)
@@ -38,6 +43,7 @@ def Train(Network, inputs_path='inputs.yaml',
     # Input data
     learning_rate = input_data["lr"]
     weight_decay  = input_data["weight_decay"]
+    no_of_tiles   = input_data["no_of_tiles"]
     num_workers   = input_data["num_workers"]
     loss_index    = input_data["loss_index"]
     batch_size    = input_data["batch_size"]
@@ -150,14 +156,22 @@ def Train(Network, inputs_path='inputs.yaml',
             assert inpt_tiles.shape == trgt_tiles.shape, \
                     "WARNING: Shapes do NOT match"
             
+            # Specify number of tiles to pass per map
+            # If set to None then all
+            if no_of_tiles == None:
+                no_of_tiles = inpt.tiles.shape[0]
+
+            # step size in for loop
+            step = min(no_of_tiles, mbs)
+
             # Pass mbs tiles through network
-            for i in range(0, inpt_tiles.shape[0], mbs):
+            for i in range(0, no_of_tiles, step):
                 
                 # Grab mbs number of input tiles
-                x = inpt_tiles[i:i+mbs, 0:1, :, :, :]
+                x = inpt_tiles[i:i+step, 0:1, :, :, :]
                 x = x.to(device)
                 # Grab mbs number of target tiles 
-                y = trgt_tiles[i:i+mbs, 0:1, :, :, :]
+                y = trgt_tiles[i:i+step, 0:1, :, :, :]
                 y = y.to(device)
                 # Pass input tiles through network
                 unet.zero_grad()
@@ -178,7 +192,7 @@ def Train(Network, inputs_path='inputs.yaml',
                     f'epoch: {e+1}/{epochs}, ' +
                     f'batch: {b_count+1}/' +
                 f'{math.ceil(len(training_set)/batch_size)}, ' +
-                    f'tiles: {i}/{inpt_tiles.shape[0]}, ' + 
+                    f'tiles: {i}/{no_of_tiles}, ' + 
                     f'loss: {loss:.6}, '
                     )
 
@@ -204,10 +218,15 @@ def Train(Network, inputs_path='inputs.yaml',
                     assert inpt_tiles.shape == trgt_tiles.shape, \
                             "WARNING: Shapes do NOT match"
 
-                    for i in range(0, inpt_tiles.shape[0], mbs):
-                        x = inpt_tiles[i:i+mbs,:,:,:,:]
+                    if no_of_tiles == None:
+                        no_of_tiles = inpt_tiles.shape[0]
+
+                    step = min(no_of_tiles, mbs)
+
+                    for i in range(0, no_of_tiles, step):
+                        x = inpt_tiles[i:i+step,:,:,:,:]
                         x = x.to(device)
-                        y = trgt_tiles[i:i+mbs,:,:,:,:]
+                        y = trgt_tiles[i:i+step,:,:,:,:]
                         y = y.to(device)
                         out = unet(x)
                         # TODO make loss function global
