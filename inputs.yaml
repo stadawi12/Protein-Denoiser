@@ -25,7 +25,7 @@ proc_model    : 'm84_e20_mbs3_wd' # denoise model
 proc_epoch    : 20          # epoch of model for processing
 map_name      : "0023.map"  # map to be denoised
 # CROSS CORRELATION INPUTS
-threshold     : 0.80        # cross correlation threshold
+threshold     : 0.73        # cross correlation threshold
 # DATA DOWNLOAD INPUTS
 min_dim       : 0           # Min map dimension for download
 max_dim       : 128         # Max map dimension for download

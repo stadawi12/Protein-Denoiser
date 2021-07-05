@@ -194,3 +194,6 @@ back out of the `badMaps` directory, you should use the action
 `moveback` (`$ ccpem-python main.py -a moveback`). You can then rerun the
 `xcorrSort.py` module with a different `threshold` value.
 IMPORTANT: To run this module you will need to use `ccpem-python`.
+
+If need any help email me at:
+mr.dawidstasiak@outlook.com
