@@ -191,6 +191,6 @@ to their corresponding `badMaps/` directories which can be found in
 the `data/` directory. Any maps found in the `badMaps/` directories
 will by default not be used in training. If you want to move maps
 back out of the `badMaps` directory, you should use the action
-`moveback` (`$python main.py -a moveback`). You can then rerun the
-`xcorr_sort.py` module with a different `threshold` value.
+`moveback` (`$ ccpem-python main.py -a moveback`). You can then rerun the
+`xcorrSort.py` module with a different `threshold` value.
 IMPORTANT: To run this module you will need to use `ccpem-python`.
